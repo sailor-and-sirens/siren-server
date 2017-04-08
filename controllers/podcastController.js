@@ -11,6 +11,11 @@ module.exports = {
           return res.send(err);
         }
         let data = response.channel.items;
+        data.forEach((item) => {
+          //sanitize to remove HTML heavy description + summary
+          delete item.description;
+          delete item.summary;
+        })
         res.send(JSON.stringify(data));
       }
     );
