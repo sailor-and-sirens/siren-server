@@ -13,7 +13,7 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         // associations can be defined here
         Episode.belongsTo(models.Podcast, {onDelete: 'CASCADE'});
-        Episode.belongsToMany(models.Playlist, {through: 'PlaylistEpisode', onDelete: 'CASCADE'});
+        Episode.belongsToMany(models.Playlist, {through: 'PlaylistEpisodes', onDelete: 'CASCADE'});
       }
     }
   });
