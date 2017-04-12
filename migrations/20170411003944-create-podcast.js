@@ -1,6 +1,6 @@
 'use strict';
 module.exports = {
-  up: function(queryInterface, Sequelize) {
+  up: function (queryInterface, Sequelize) {
     return queryInterface.createTable('Podcasts', {
       id: {
         allowNull: false,
@@ -21,7 +21,7 @@ module.exports = {
       }
     });
   },
-  down: function(queryInterface, Sequelize) {
+  down: function (queryInterfaces) {
     return queryInterface.dropTable('Podcasts');
   }
 };

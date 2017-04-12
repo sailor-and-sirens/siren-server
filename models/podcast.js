@@ -6,7 +6,8 @@ module.exports = function (sequelize, DataTypes) {
     name: DataTypes.STRING,
     feedUrl: DataTypes.STRING,
     primaryGenreName: DataTypes.STRING,
-    artworkUrl: DataTypes.STRING
+    artworkUrl: DataTypes.STRING,
+    artworkUrl600: DataTypes.STRING
   }, {
     classMethods: {
       associate: function (models) {
