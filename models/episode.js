@@ -4,7 +4,6 @@ module.exports = function (sequelize, DataTypes) {
     title: DataTypes.STRING,
     creator: DataTypes.STRING,
     description: DataTypes.STRING,
-    imageUrl: DataTypes.STRING,
     length: DataTypes.TIME,
     releaseDate: DataTypes.DATEONLY,
     category: DataTypes.STRING

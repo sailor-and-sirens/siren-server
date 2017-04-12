@@ -2,14 +2,14 @@ const chalk = require('chalk');
 const config = require('./config/config');
 const express = require('express');
 const bodyParser = require('body-parser');
-const routes = require('./routes');
+const morgan = require('morgan');
+const podcastRouter = require('./routers/podcasts');
 var app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// require('./config/db');
-
+app.use(morgan('dev'));
 app.use(function (req, res, next) {
   res.header('access-control-allow-origin', '*');
   res.header('access-control-allow-methods', 'GET, POST, PUT, OPTIONS, DELETE');
@@ -19,7 +19,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use('/api', routes);
+app.use('/api/podcasts', podcastRouter);
 
 app.use(function (err, req, res, next) {
   console.error(chalk.red.bold('ERROR: ', err));

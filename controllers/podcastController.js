@@ -1,8 +1,7 @@
 const podcastParser = require('podcast-parser');
 
 module.exports = {
-
-  getFeed (req, res) {
+  getFeed: function (req, res) {
     var feedUrl = req.query.url;
     podcastParser.execute(feedUrl, {},
       function (err, response) {
@@ -15,10 +14,9 @@ module.exports = {
           //sanitize to remove HTML heavy description + summary
           delete item.description;
           delete item.summary;
-        })
-        res.send(JSON.stringify(data));
+        });
+        res.json(data);
       }
     );
   }
-
 };

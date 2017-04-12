@@ -17,9 +17,6 @@ module.exports = {
       description: {
         type: Sequelize.STRING
       },
-      imageUrl: {
-        type: Sequelize.STRING
-      },
       length: {
         type: Sequelize.TIME
       },
