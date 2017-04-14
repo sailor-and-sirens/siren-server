@@ -1,5 +1,5 @@
 module.exports = {
-  development: {
+  production: {
     username: process.env.POSTGRES_USER,
     password: null,
     database: process.env.SIREN_DB_DEV,
@@ -13,10 +13,10 @@ module.exports = {
     host: '127.0.0.1',
     dialect: 'postgres'
   },
-  production: {
-    username: 'root',
+  development: {
+    username: 'meg',
     password: null,
-    database: 'database_production',
+    database: 'database_development',
     host: '127.0.0.1',
     dialect: 'postgres'
   }
