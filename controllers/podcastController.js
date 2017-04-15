@@ -11,7 +11,7 @@ module.exports = {
           console.log(err);
           return res.send(err);
         }
-        var data = response.channel.items;
+        let data = response.channel.items;
         data.forEach((item) => {
           var duration = item.duration;
           //parse duration
@@ -58,7 +58,7 @@ module.exports = {
               console.log(err);
               return res.send(err);
             }
-            let data = response.channel.items;
+            var data = response.channel.items;
             data.forEach((item) => {
               //sanitize to remove HTML heavy description + summary
               delete item.description;
