@@ -1,5 +1,5 @@
 'use strict';
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   var UserEpisode = sequelize.define('UserEpisode', {
     UserId: DataTypes.INTEGER,
     EpisodeId: DataTypes.INTEGER,
@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     lastPlayed: DataTypes.DATE
   }, {
     classMethods: {
-      associate: function(models) {
+      associate: function () {
         // associations can be defined here
       }
     }

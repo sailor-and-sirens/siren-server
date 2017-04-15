@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         // associations can be defined here
         Podcast.belongsToMany(models.User, {through: 'UserPodcasts', onDelete: 'CASCADE'});
-        Podcast.hasMany(models.Episode)
+        Podcast.hasMany(models.Episode);
       }
     }
   });

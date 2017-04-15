@@ -21,7 +21,7 @@ module.exports = {
       }
     });
   },
-  down: function (queryInterfaces) {
+  down: function (queryInterface) {
     return queryInterface.dropTable('Podcasts');
   }
 };

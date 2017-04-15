@@ -1,6 +1,3 @@
-var env       = process.env.NODE_ENV || 'development';
-var config    = require(__dirname + '/../config/db.js')[env];
-var chalk     = require('chalk');
 var db        = require('../models');
 
 var Podcast           = require('../models/podcast')(db.sequelize, db.Sequelize);
