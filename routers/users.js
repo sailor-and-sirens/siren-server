@@ -1,7 +1,9 @@
 const userRouter = require('express').Router();
 const userController = require('../controllers/userController.js');
 
-userRouter.post('/', userController.createUser);
+userRouter.post('/createUser', userController.createUser);
 userRouter.post('/login', userController.checkUser);
+userRouter.post('/likeEpisode', userController.likeEpisode);
+userRouter.post('/bookmarkEpisode', userController.bookmarkEpisode);
 
 module.exports = userRouter;
