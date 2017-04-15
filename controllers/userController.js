@@ -11,7 +11,7 @@ function createToken (user) {
 module.exports = {
   createUser: function (req, res) {
     bcrypt.hash(req.body.password, 10)
-    .then (function(hash) { return hash; })
+    .then (function (hash) { return hash; })
     .then((hash) => {
       req.body.password = hash;
       db.User.find({where: {username: req.body.username}});
@@ -35,7 +35,7 @@ module.exports = {
       if (!data) {
         res.status(400).send({message: 'Incorrect username and/or password'});
       } else {
-        bcrypt.compare(req.body.password, data.password, function(err, response) {
+        bcrypt.compare(req.body.password, data.password, function (err, response) {
           if(err || !response) {
             console.log('Error ', err);
             res.status(400).send({message: 'Incorrect username and/or password'});
