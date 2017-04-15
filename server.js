@@ -30,6 +30,5 @@ app.use(function (err, req, res, next) {
 });
 
 app.listen(config.port, function () {
-  require('./middleware/initialize-db.js');
   console.log('Listening on port ' + config.port);
 });
