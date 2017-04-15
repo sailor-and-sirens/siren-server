@@ -1,4 +1,4 @@
-const db = require('../middleware/db');
+//const db = require('../middleware/db');
 const podcastRouter = require('express').Router();
 const podcastController = require('../controllers/podcastController.js');
 

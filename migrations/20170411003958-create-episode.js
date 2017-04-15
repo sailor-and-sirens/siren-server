@@ -1,11 +1,14 @@
 'use strict';
 module.exports = {
-  up: function(queryInterface, Sequelize) {
+  up: function (queryInterface, Sequelize) {
     return queryInterface.createTable('Episodes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      PodcastId: {
         type: Sequelize.INTEGER
       },
       title: {
@@ -36,7 +39,7 @@ module.exports = {
       }
     });
   },
-  down: function(queryInterface, Sequelize) {
+  down: function (queryInterface) {
     return queryInterface.dropTable('Episodes');
   }
 };

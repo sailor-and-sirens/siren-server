@@ -1,3 +1,4 @@
+//const db = require('../middleware/db');
 const db = require('../middleware/db');
 const podcastParser = require('podcast-parser');
 
@@ -26,6 +27,7 @@ module.exports = {
                   formattedDuration += ':';
                 }
               }
+              item.duration = formattedDuration;
             }
           }
           //sanitize to remove HTML heavy description + summary
@@ -39,6 +41,7 @@ module.exports = {
   subscribe: function (req, res) {
     var params = {
       artistId: req.body.artistId,
+      artistName: req.body.artistName,
       artworkUrl: req.body.artworkUrl100,
       artworkUrl600: req.body.artworkUrl600,
       collectionId: req.body.collectionId,
@@ -71,6 +74,8 @@ module.exports = {
             });
           }
         );
+        // Add Podcast to UserPodcasts
+        // Add Episodes to UserEpisodes
         res.status(201).json(data);
       });
   }

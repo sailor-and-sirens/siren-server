@@ -1,9 +1,9 @@
 'use strict';
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize) {
   var PlaylistEpisode = sequelize.define('PlaylistEpisode', {
   }, {
     classMethods: {
-      associate: function(models) {
+      associate: function () {
         // associations can be defined here
       }
     }

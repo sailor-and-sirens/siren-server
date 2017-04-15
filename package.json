@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha spec/* --reporter spec",
     "lint": "eslint ."
   },
   "author": "Sailor + Sirens",
@@ -26,6 +26,7 @@
     "lint"
   ],
   "devDependencies": {
+    "chai": "^3.5.0",
     "eslint": "^3.19.0",
     "pre-push": "^0.1.1"
   }

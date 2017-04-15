@@ -3,6 +3,7 @@ module.exports = function (sequelize, DataTypes) {
   var Podcast = sequelize.define('Podcast', {
     collectionId: DataTypes.INTEGER,
     artistId: DataTypes.INTEGER,
+    artistName: DataTypes.STRING,
     name: DataTypes.STRING,
     feedUrl: DataTypes.STRING,
     primaryGenreName: DataTypes.STRING,
@@ -13,6 +14,7 @@ module.exports = function (sequelize, DataTypes) {
       associate: function (models) {
         // associations can be defined here
         Podcast.belongsToMany(models.User, {through: 'UserPodcasts', onDelete: 'CASCADE'});
+        Podcast.hasMany(models.Episode);
       }
     }
   });
