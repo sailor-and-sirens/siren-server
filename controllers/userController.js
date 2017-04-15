@@ -17,7 +17,6 @@ module.exports = {
       db.User.find({where: {username: req.body.username}})
     })
       .then(function (user) {
-        console.log('Found user: ', user);
         if (user) {
           res.status(409).send({message: 'User already exists'});
         } else {
@@ -42,7 +41,6 @@ module.exports = {
             res.status(400).send({message: 'Incorrect username and/or password'})
           } else {
             var tokenData = createToken(req.body);
-            console.log('Token data: ', tokenData)
             res.status(201).json({id_token: tokenData});
           }
         });
