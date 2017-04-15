@@ -6,7 +6,8 @@ module.exports = function (sequelize, DataTypes) {
     description: DataTypes.STRING,
     length: DataTypes.TIME,
     releaseDate: DataTypes.DATEONLY,
-    category: DataTypes.STRING
+    category: DataTypes.STRING,
+    PodcastId: DataTypes.INTEGER
   }, {
     classMethods: {
       associate: function (models) {

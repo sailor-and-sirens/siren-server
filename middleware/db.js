@@ -1,67 +1,23 @@
-var Sequelize = require('sequelize');
 var env       = process.env.NODE_ENV || 'development';
 var config    = require(__dirname + '/../config/db.js')[env];
-var db;
+var chalk     = require('chalk');
+var db        = require('../models');
 
-//initialize Sequelize with postgres with remote url
-if (process.env.DATABASE_URL) {
-  db = new Sequelize(process.env.DATABASE_URL, {dialect: 'postgres', logging: false });
-} else {
-  // otherwise initialize Sequelize with postgres on your local machine
-  db = new Sequelize(config.database, process.env.POSTGRES_USER, '', {dialect: 'postgres', logging: false });
-}
-
-var Podcast = db.define('Podcast', {
-  collectionId: Sequelize.INTEGER,
-  artistId: Sequelize.INTEGER,
-  name: Sequelize.STRING,
-  feedUrl: Sequelize.STRING,
-  primaryGenreName: Sequelize.STRING,
-  artworkUrl: Sequelize.STRING,
-  artworkUrl600: Sequelize.STRING
-});
-
-var Episode = db.define('Episode', {
-  title: Sequelize.STRING,
-  creator: Sequelize.STRING,
-  description: Sequelize.STRING,
-  length: Sequelize.TIME,
-  releaseDate: Sequelize.DATEONLY,
-  category: Sequelize.STRING
-});
-
-var Playlist = db.define('Playlist', {
-  name: Sequelize.STRING
-});
-
-var User = db.define('User', {
-  username: Sequelize.STRING,
-  email: Sequelize.STRING,
-  avatarUrl: Sequelize.STRING
-});
-
-var UserEpisode = db.define('UserEpisode', {
-  userId: Sequelize.INTEGER,
-  episodeId: Sequelize.INTEGER,
-  bookmarked: Sequelize.BOOLEAN,
-  liked: Sequelize.BOOLEAN,
-  currentTime: Sequelize.TIME,
-  lastPlayed: Sequelize.DATE
-});
-
-var UserPodcast = db.define('UserPodcast', {
-  userId: Sequelize.INTEGER,
-  podcastId: Sequelize.INTEGER
-});
-
-var PlaylistEpisode = db.define('PlaylistEpisode', {});
+var Podcast           = require('../models/podcast')(db.sequelize, db.Sequelize);
+var Episode           = require('../models/episode')(db.sequelize, db.Sequelize);
+var Playlist          = require('../models/playlist')(db.sequelize, db.Sequelize);
+var User              = require('../models/user')(db.sequelize, db.Sequelize);
+var UserPodcast       = require('../models/userpodcast')(db.sequelize, db.Sequelize);
+var UserEpisode       = require('../models/userepisode')(db.sequelize, db.Sequelize);
+var PlaylistEpisode   = require('../models/playlistepisode')(db.sequelize, db.Sequelize);
 
 module.exports = {
+  db: db,
   Podcast: Podcast,
   Episode: Episode,
   Playlist: Playlist,
   User: User,
-  UserEpisode: UserEpisode,
   UserPodcast: UserPodcast,
+  UserEpisode: UserEpisode,
   PlaylistEpisode: PlaylistEpisode
 };
