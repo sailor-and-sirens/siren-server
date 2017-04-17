@@ -14,11 +14,8 @@ module.exports = {
       title: {
         type: Sequelize.STRING
       },
-      creator: {
-        type: Sequelize.STRING
-      },
       description: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       length: {
         type: Sequelize.TIME
@@ -26,7 +23,7 @@ module.exports = {
       releaseDate: {
         type: Sequelize.DATEONLY
       },
-      category: {
+      url: {
         type: Sequelize.STRING
       },
       createdAt: {
