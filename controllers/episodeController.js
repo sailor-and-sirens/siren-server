@@ -12,14 +12,11 @@ module.exports = {
 
   updateUserEpisode: function (req, res) {
     UserEpisode.find({
-      where: {UserId: 1, EpisodeId: 1}
+      where: {UserId: 1, EpisodeId: req.body.episodeId} // TODO update with req.user.id
     }).then(function (foundUserEpisode) {
-      console.log(req.body);
       foundUserEpisode.update({
-        bookmarked: req.body.bookmarked || foundUserEpisode.bookmarked,
-        liked: req.body.liked || foundUserEpisode.liked,
-        currentTime: req.body.currentTime || null,
-        lastPlayed: req.body.lastPlayed || null
+        currentTime: req.body.currentTime,
+        lastPlayed: req.body.lastPlayed
       }).then(function (updatedUserEpisode) {
         res.status(200).json(updatedUserEpisode);
       });

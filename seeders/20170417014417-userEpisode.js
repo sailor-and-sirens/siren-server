@@ -13,6 +13,16 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       },
+      {
+        UserId: 1,
+        EpisodeId: 2,
+        bookmarked: null,
+        liked: null,
+        currentTime: null,
+        lastPlayed: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
     ], {});
   },
 
