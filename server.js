@@ -5,10 +5,28 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const podcastRouter = require('./routers/podcasts');
 const userRouter = require('./routers/users');
-var app = express();
+const secret = require('./secret.json');
+const jwt = require('jsonwebtoken');
+const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+// AUTHENTICATION MIDDLEWEAR: comment out if testing without token in auth header
+app.use(function (req, res, next) {
+  if (!req.url.includes('/createUser') && !req.url.includes('/login')) {
+    var token = req.headers.authorization;
+    if (!token) {
+      res.status(500).send('No authorization header with request.');
+      return;
+    } else {
+      var userObj = jwt.decode(token, secret.secret);
+      req.user = userObj;
+      return next();
+    }
+  }
+  return next();
+});
 
 app.use(morgan('dev'));
 app.use(function (req, res, next) {
@@ -31,4 +49,5 @@ app.use(function (err, req, res, next) {
 
 app.listen(config.port, function () {
   console.log('Listening on port ' + config.port);
+  // require('./middleware/db.js');
 });

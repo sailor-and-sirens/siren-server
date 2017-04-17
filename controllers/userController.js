@@ -4,10 +4,6 @@ const config = require('../secret.json');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 
-function createToken (user) {
-  return jwt.sign(_.omit(user, 'password'), config.secret, {expiresIn:60*60*5});
-}
-
 module.exports = {
   createUser: function (req, res) {
     bcrypt.hash(req.body.password, 10)
@@ -21,10 +17,11 @@ module.exports = {
           res.status(409).send({message: 'User already exists'});
         } else {
           db.User.create(req.body)
-        .then(function () {
-          var tokenData = createToken(req.body);
-          res.status(201).json({id_token: tokenData});
-        });
+          .then(function (data) {
+            var tokenData = jwt.sign(_.omit(data, 'password'), config.secret);
+            console.log('token: ', tokenData);
+            res.status(201).json({id_token: tokenData});
+          });
         }
       });
   },
@@ -40,7 +37,8 @@ module.exports = {
             console.log('Error ', err);
             res.status(400).send({message: 'Incorrect username and/or password'});
           } else {
-            var tokenData = createToken(req.body);
+            var tokenData = jwt.sign(_.omit(data, 'password'), config.secret);
+            console.log('token: ', tokenData);
             res.status(201).json({id_token: tokenData});
           }
         });
@@ -49,5 +47,39 @@ module.exports = {
     .catch((error) => {
       console.warn('Error: ', error);
     });
+  },
+
+  likeEpisode: function (req, res) {
+    console.log('LikeEpisode ran! ', req.body);
+    db.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
+      .then((record) => {
+        if (record) {
+          record.update({
+            liked: req.body.liked
+          })
+          .then(function () {
+            res.send(201);
+          });
+        } else {
+          res.status(400).send({message: 'User not found'});
+        }
+      });
+  },
+
+  bookmarkEpisode: function (req, res) {
+    console.log('BookmarkEpisode ran!', req.body);
+    db.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
+      .then((record) => {
+        if (record) {
+          record.update({
+            bookmarked: req.body.bookmark
+          })
+          .then(function () {
+            res.send(201);
+          });
+        } else {
+          res.status(400).send({message: 'User not found'});
+        }
+      });
   }
 };
