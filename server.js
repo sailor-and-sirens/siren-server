@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const podcastRouter = require('./routers/podcasts');
 const userRouter = require('./routers/users');
 const episodeRouter = require('./routers/episodes');
+const playlistRouter = require('./routers/playlists');
 var app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,6 +25,7 @@ app.use(function (req, res, next) {
 app.use('/api/podcasts', podcastRouter);
 app.use('/api/users', userRouter);
 app.use('/api/episodes', episodeRouter);
+app.use('/api/playlists', playlistRouter);
 
 app.use(function (err, req, res, next) {
   console.error(chalk.red.bold('ERROR: ', err));
