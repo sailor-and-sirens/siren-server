@@ -1,4 +1,5 @@
 module.exports = {
+  use_environment_variable: true,
   development: {
     username: process.env.POSTGRES_USER,
     password: null,

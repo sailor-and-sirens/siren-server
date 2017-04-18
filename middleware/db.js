@@ -8,7 +8,7 @@ const dbConfig  = require(__dirname + '/../config/db.js')[env];
 var db          = null;
 
 if (dbConfig.use_env_variable) {
-  db = new Sequelize(process.env[dbConfig.use_env_variable]);
+  db = new Sequelize('postgres:/aqcsysjrixrhym:499b89fc9cf873dde71f8fcbe52d5fd3cab6ccd066a6b8b16205f56d9dab8d97@ec2-54-163-246-154.compute-1.amazonaws.com:5432/dec48n2kkdjcg0?ssl=true', {'dialect':'postgres', 'ssl':true, 'dialectOptions':{'ssl':{'require':true}}});
 } else {
   db = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, dbConfig);
 }
