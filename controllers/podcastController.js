@@ -63,18 +63,6 @@ module.exports = {
           }
         });
       }
-      var feed = helpers.getFeed(req.body.feedUrl);
-      feed.episodes.forEach((episode) => {
-        db.Episode.create({
-          title: episode.title,
-          description: episode.description,
-          length: episode.duration,
-          releaseDate: episode.published,
-          url: episode.enclosure.url,
-          PodcastId: data.id
-        });
-      });
-      console.log(chalk.magenta(JSON.stringify(feed, null, 2)));
     })
     .then(function (data) {
       res.status(201).send(data);

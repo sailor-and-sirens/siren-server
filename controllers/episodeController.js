@@ -1,5 +1,4 @@
 const db = require('../middleware/db');
-const UserEpisode = require('../models').UserEpisode;
 
 module.exports = {
   createEpisode: function (req, res) {
@@ -11,7 +10,7 @@ module.exports = {
   },
 
   updateUserEpisode: function (req, res) {
-    UserEpisode.find({
+    db.UserEpisode.find({
       where: {UserId: 1, EpisodeId: req.body.episodeId} // TODO update with req.user.id
     }).then(function (foundUserEpisode) {
       foundUserEpisode.update({

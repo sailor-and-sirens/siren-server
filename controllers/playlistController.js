@@ -1,8 +1,8 @@
-const PlaylistEpisode = require('../models').PlaylistEpisode;
+const db = require('../middleware/db');
 
 module.exports = {
   addEpisodeToPlaylist: function (req, res) {
-    PlaylistEpisode.findOrCreate({
+    db.PlaylistEpisode.findOrCreate({
       where: {PlaylistId: req.body.playlistId, EpisodeId: req.body.episodeId}
     })
     .then(function (playlistEpisode) {
@@ -15,7 +15,7 @@ module.exports = {
   },
 
   removeEpisodeFromPlaylist: function (req, res) {
-    PlaylistEpisode.destroy({
+    db.PlaylistEpisode.destroy({
       where: {PlaylistId: req.body.playlistId, EpisodeId: req.body.episodeId}
     })
     .then(function () {
