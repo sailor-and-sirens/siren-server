@@ -3,6 +3,7 @@ exports.port = process.env.PORT || 3000;
 exports.debug = true;
 
 // DATABASE CONFIGURATION
+exports.dbEnv = process.env.NODE_ENV || 'development';
 exports.dbName = process.env.SIREN_DB_DEV;
 exports.dbUrl = process.env.DATABASE_URL;
 exports.dbUser = process.env.POSTGRES_USER;
