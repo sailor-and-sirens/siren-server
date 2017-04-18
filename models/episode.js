@@ -2,11 +2,10 @@
 module.exports = function (sequelize, DataTypes) {
   var Episode = sequelize.define('Episode', {
     title: DataTypes.STRING,
-    creator: DataTypes.STRING,
-    description: DataTypes.STRING,
-    length: DataTypes.STRING,
-    releaseDate: DataTypes.STRING,
-    category: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    length: DataTypes.TIME,
+    releaseDate: DataTypes.DATEONLY,
+    url: DataTypes.STRING,
     PodcastId: DataTypes.INTEGER
   }, {
     classMethods: {

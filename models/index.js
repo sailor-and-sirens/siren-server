@@ -1,19 +1,20 @@
 'use strict';
 
-var chalk     = require('chalk');
-var fs        = require('fs');
-var path      = require('path');
-var Sequelize = require('sequelize');
-var basename  = path.basename(module.filename);
-var env       = process.env.NODE_ENV || 'development';
-var config    = require(__dirname + '/../config/db.js')[env];
-var db        = {};
-var sequelize;
+const chalk     = require('chalk');
+const fs        = require('fs');
+const path      = require('path');
+const Sequelize = require('sequelize');
+const basename  = path.basename(module.filename);
+const env       = process.env.NODE_ENV || 'development';
+const config    = require('../config/config');
+const dbConfig  = require(__dirname + '/../config/db.js')[env];
+const db        = {};
+var sequelize   = null;
 
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable]);
+if (dbConfig.use_env_variable) {
+  sequelize = new Sequelize(process.env[dbConfig.use_env_variable]);
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, dbConfig);
 }
 
 fs
@@ -23,7 +24,10 @@ fs
   })
   .forEach(function (file) {
     var model = sequelize['import'](path.join(__dirname, file));
-    console.log(chalk.yellow(db[model.name] = model));
+    if (config.debug) {
+      console.log(chalk.blue.bold('Logging from Sequelize ./models/index.js: '));
+      console.log('Importing: ', model);
+    }
     db[model.name] = model;
   });
 
