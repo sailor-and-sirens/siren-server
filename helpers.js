@@ -18,6 +18,27 @@ var feedSanitizer = (data) => {
   return data;
 };
 
+var getFeed = (feedUrl) => {
+  request(feedUrl, (err, response, data) => {
+    if (err) {
+      console.error('Network error', err);
+      return;
+    }
+    parsePodcast(data, (err, data) => {
+      if (err) {
+        console.error('Parsing error', err);
+        return;
+      }
+      data.episodes = helpers.feedSanitizer(data.episodes);
+      console.log(data);
+      return data;
+    });
+  });
+},
+
 module.exports = {
-  feedSanitizer: feedSanitizer
+  feedSanitizer: feedSanitizer,
+  getFeed: getFeed
 };
+
+

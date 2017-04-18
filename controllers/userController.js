@@ -18,9 +18,19 @@ module.exports = {
         } else {
           db.User.create(req.body)
           .then(function (data) {
+            console.log(data);
+            var userId = data.dataValues.id
             var tokenData = jwt.sign(_.omit(data, 'password'), config.secret);
             console.log('token: ', tokenData);
             res.status(201).json({id_token: tokenData});
+            return userId;
+          })
+          .then(function (userId) {
+            db.Playlist.create({name: 'Bookmarked', "UserId": userId});
+            db.Playlist.create({name: 'Currently Playing', "UserId": userId})
+          })
+          .catch((error) => {
+            console.warn('Error: ', error);
           });
         }
       });
