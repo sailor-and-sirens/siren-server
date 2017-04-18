@@ -34,7 +34,7 @@ var getFeed = (feedUrl) => {
       return data;
     });
   });
-},
+}
 
 module.exports = {
   feedSanitizer: feedSanitizer,
