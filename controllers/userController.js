@@ -84,7 +84,7 @@ module.exports = {
       .then((record) => {
         console.log('playlist record: ', record, 'record.id: ', record.id);
         if (req.body.bookmark) {
-          db.PlaylistEpisode.create({playlistId: record.id, episodeId: req.body.id})
+          db.PlaylistEpisode.create({playlistId: record.id, episodeId: req.body.id});
         } else {
           db.PlaylistEpisode.destroy({playlistId: record.id, episodeId: req.body.id})
         }
