@@ -1,4 +1,6 @@
 const sanitize = require('sanitize-html');
+const parsePodcast = require('node-podcast-parser');
+const request = require('request');
 
 var secondstotime = (secs) => {
   var t = new Date(1970,0,1);
@@ -18,6 +20,27 @@ var feedSanitizer = (data) => {
   return data;
 };
 
-module.exports = {
-  feedSanitizer: feedSanitizer
+var getFeed = (feedUrl) => {
+  request(feedUrl, (err, response, data) => {
+    if (err) {
+      console.error('Network error', err);
+      return;
+    }
+    parsePodcast(data, (err, data) => {
+      if (err) {
+        console.error('Parsing error', err);
+        return;
+      }
+      data.episodes = feedSanitizer(data.episodes);
+      console.log(data);
+      return data;
+    });
+  });
 };
+
+module.exports = {
+  feedSanitizer: feedSanitizer,
+  getFeed: getFeed
+};
+
+
