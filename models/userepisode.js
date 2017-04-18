@@ -5,7 +5,7 @@ module.exports = function (sequelize, DataTypes) {
     EpisodeId: DataTypes.INTEGER,
     bookmarked: DataTypes.BOOLEAN,
     liked: DataTypes.BOOLEAN,
-    currentTime: DataTypes.TIME,
+    currentTime: DataTypes.INTEGER, // changed from Time b/c data will be milliseconds
     lastPlayed: DataTypes.DATE
   }, {
     classMethods: {

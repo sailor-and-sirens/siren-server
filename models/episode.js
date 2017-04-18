@@ -4,16 +4,16 @@ module.exports = function (sequelize, DataTypes) {
     title: DataTypes.STRING,
     creator: DataTypes.STRING,
     description: DataTypes.STRING,
-    length: DataTypes.TIME,
-    releaseDate: DataTypes.DATEONLY,
+    length: DataTypes.STRING,
+    releaseDate: DataTypes.STRING,
     category: DataTypes.STRING,
     PodcastId: DataTypes.INTEGER
   }, {
     classMethods: {
       associate: function (models) {
-        // associations can be defined here
         Episode.belongsTo(models.Podcast, {onDelete: 'CASCADE'});
         Episode.belongsToMany(models.Playlist, {through: 'PlaylistEpisodes', onDelete: 'CASCADE'});
+        Episode.belongsToMany(models.User, {through: models.UserEpisode});
       }
     }
   });

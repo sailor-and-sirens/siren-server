@@ -8,9 +8,9 @@ module.exports = function (sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function (models) {
-        // associations can be defined here
         User.belongsToMany(models.Podcast, {through: 'UserPodcasts', onDelete: 'CASCADE'});
         User.belongsToMany(models.Episode, {through: 'UserEpisodes', as: 'Inbox', onDelete: 'CASCADE'});
+        User.hasMany(models.Playlist);
       }
     }
   });

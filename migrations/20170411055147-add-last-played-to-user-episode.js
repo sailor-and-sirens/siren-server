@@ -2,7 +2,7 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    return queryInterface.addColumn('UserEpisodes', 'lastPlayed', Sequelize.DATEONLY);
+    return queryInterface.addColumn('UserEpisodes', 'lastPlayed', Sequelize.DATE);
   },
 
   down: function (queryInterface) {
