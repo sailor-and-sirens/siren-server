@@ -17,7 +17,7 @@ module.exports = {
   production: {
     username: 'root',
     password: null,
-    database: 'database_production',
+    database: process.env.DATABASE_URL,
     host: '127.0.0.1',
     dialect: 'postgres'
   }
