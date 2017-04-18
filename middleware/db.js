@@ -77,7 +77,7 @@ Episode.hasMany(Action);
 Playlist.belongsTo(User);
 Playlist.belongsToMany(Episode, {through: PlaylistEpisode});
 
-db.sync({force: true}).then(function () {
+db.sync().then(function () {
   if (config.debug) {
     console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
   }
