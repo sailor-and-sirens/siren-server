@@ -2,15 +2,15 @@
 
 const chalk     = require('chalk');
 const Sequelize = require('sequelize');
-const env       = process.env.NODE_ENV || 'development';
+//const env       = process.env.NODE_ENV || 'development';
 const config    = require('../config/config');
-const dbConfig  = require(__dirname + '/../config/db.js')[env];
+//const dbConfig  = require(__dirname + '/../config/db.js')[env];
 var db          = null;
 
-if (dbConfig.use_env_variable) {
-  db = new Sequelize(dbConfig.database + '?ssl=true', {'dialect':'postgres', 'ssl':true, 'dialectOptions':{'ssl':{'require':true}}});
+if (process.env.DATABASE_URL) {
+  db = new Sequelize(process.env.DATABASE_URL, {dialect: 'postgres', logging: false });
 } else {
-  db = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, dbConfig);
+  db = new Sequelize(config.dbName, config.dbUser, config.dbPwd, {dialect: 'postgres', logging: false });
 }
 
 var Podcast = db.define('Podcast', {
@@ -79,7 +79,7 @@ Playlist.belongsToMany(Episode, {through: PlaylistEpisode});
 
 db.sync({force: true}).then(function () {
   if (config.debug) {
-    console.log(chalk.green('Initialized the ' + env + ' database: ' + dbConfig.database));
+    console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
   }
   return null;
 }).catch(function (error) {
