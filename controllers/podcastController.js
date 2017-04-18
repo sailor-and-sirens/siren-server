@@ -1,6 +1,7 @@
-//const db = require('../middleware/db');
+const chalk = require('chalk');
+//const config = require('../config/config');
 const db = require('../middleware/db');
-const podcastParser = require('podcast-parser');
+//const podcastParser = require('podcast-parser');
 const helpers = require('../helpers.js');
 const parsePodcast = require('node-podcast-parser');
 const request = require('request');
@@ -20,6 +21,7 @@ module.exports = {
         }
         data.episodes = helpers.feedSanitizer(data.episodes);
         console.log(data);
+        console.log(chalk.yellow(req.user));
         res.send(JSON.stringify(data));
       });
     });
@@ -36,34 +38,34 @@ module.exports = {
       name: req.body.collectionName,
       primaryGenreName: req.body.primaryGenreName,
     };
-    // Use .findOrCreate instead...
-    db.Podcast.create(params)
-      .then(function (data) {
-        podcastParser.execute(data.feedUrl, {},
-          function (err, response) {
-            if (err) {
-              console.log(err);
-              return res.send(err);
-            }
-            var data = response.channel.items;
-            data.forEach((item) => {
-              //sanitize to remove HTML heavy description + summary
-              delete item.description;
-              delete item.summary;
-              item.PodcastId = data.id;
-              // TODO: Check incoming length, throwing error because 255 is not enough characters...
-              //item.description = item.content;
-              // TODO: Parse time into format Postgres needs...
-              //item.length = item.duration;
-              item.releaseDate = item.pubDate;
-              // Use .findOrCreate instead...
-              db.Episode.create(item);
-            });
+    db.Podcast.findOne({
+      where: {
+        feedUrl: params.feedUrl
+      }
+    })
+    .then(function (data) {
+      if (!data) {
+        db.Podcast.create(params)
+          .then(function (data) {
+            // Remove hardcoded user - for current testing
+            db.db.sequelize.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(1, ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+          });
+      } else {
+        db.UserPodcast.find({
+          where: {
+            PodcastId: data.id,
+            UserId: 1
           }
-        );
-        // Add Podcast to UserPodcasts
-        // Add Episodes to UserEpisodes
-        res.status(201).json(data);
-      });
+        })
+        .then(function (data) {
+          if(!data) {
+            db.db.sequelize.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(1, ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+          }
+        });
+      }
+    })
+    .then(function (data) {
+      res.status(201).send(data);
+    });
   }
 };

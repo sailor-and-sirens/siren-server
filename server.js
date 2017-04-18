@@ -55,3 +55,5 @@ app.listen(config.port, function () {
   console.log('Listening on port ' + config.port);
   // require('./middleware/db.js');
 });
+
+module.exports = app;
