@@ -80,6 +80,7 @@ db.sync(/*{force: true}*/).then(function () {
   if (config.debug) {
     console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
   }
+<<<<<<< HEAD
   return null;
 }).catch(function (error) {
   console.error(chalk.red(Object.keys(error)));
@@ -98,3 +99,6 @@ module.exports = {
   PlaylistEpisode: PlaylistEpisode,
   Action: Action
 };
+=======
+};
+>>>>>>> Update bookmark playlist actions
