@@ -1,10 +1,10 @@
-const chalk = require('chalk');
-//const config = require('../config/config');
-const db = require('../config/db');
-//const podcastParser = require('podcast-parser');
-const helpers = require('../middleware/helpers.js');
-const parsePodcast = require('node-podcast-parser');
-const request = require('request');
+const chalk         = require('chalk');
+const config        = require('../config/config');
+const sequelize     = require('../config/db');
+const helpers       = require('../middleware/helpers.js');
+const parsePodcast  = require('node-podcast-parser');
+const request       = require('request');
+const Promise       = require('bluebird');
 
 var mockUser = function () {
   var user = {
@@ -18,6 +18,8 @@ var mockUser = function () {
   };
   return user;
 };
+
+var podcastID = 1;
 
 module.exports = {
   getFeed: function (req, res) {
@@ -42,7 +44,10 @@ module.exports = {
   subscribe: function (req, res) {
     var user = req.user || mockUser();
     console.log(chalk.white('User: ', JSON.stringify(user)));
-
+    if (config.debug) {
+      console.log(chalk.blue('Subscribing ' + user.username + ' to Podcast...'));
+      console.log(chalk.white(req.body.collectionName));
+    }
     var params = {
       artistId: req.body.artistId,
       artistName: req.body.artistName,
@@ -53,42 +58,46 @@ module.exports = {
       name: req.body.collectionName,
       primaryGenreName: req.body.primaryGenreName,
     };
-    db.Podcast.findOne({
+    sequelize.Podcast.findOne({
       where: {
         feedUrl: params.feedUrl
       }
     })
     .then(function (data) {
-      console.log(chalk.blue('Data: ', JSON.stringify(data, null, 2)));
-      console.log(chalk.blue('on line 62...'));
+      if (config.debug) {
+        console.log(chalk.blue('Line 60 | Data: ', JSON.stringify(data, null, 2)));
+      }
       // If the Podcast has not been written to the database:
       if (!data) {
         // Create the Podcast record
-        db.Podcast.create(params)
+        sequelize.Podcast.create(params)
           .then(function (data) {
+            podcastID = data.id;
             // Then Insert the Podcast into UserPodcasts
-            console.log(chalk.blue('Data: ', JSON.stringify(data, null, 2)));
-            console.log(chalk.blue('on line 67...'));
+            if (config.debug) {
+              console.log(chalk.blue('Line 67 | Data: ', JSON.stringify(data, null, 2)));
+            }
             var user = req.user || mockUser();
-            //console.log(chalk.blue(Object.keys(db.db)));
             // Remove hardcoded user - for current testing
-            db.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+            sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
           });
       } else {
+        podcastID = data.id;
         // If the Podcast has been written to the database
         // Check to see if this is already in UserPodcasts
-        db.UserPodcast.find({
+        sequelize.UserPodcast.find({
           where: {
             PodcastId: data.id,
             UserId: user.id
           }
         })
         .then(function (data) {
-          console.log(chalk.blue('Data: ', JSON.stringify(data, null, 2)));
-          console.log(chalk.blue('on line 87...'));
+          if (config.debug) {
+            console.log(chalk.blue('Line 83 | Data: ', JSON.stringify(data, null, 2)));
+          }
           if(!data) {
             // If not, get a reference to the Podcast record
-            db.Podcast.findOne({
+            sequelize.Podcast.findOne({
               where: {
                 feedUrl: params.feedUrl
               }
@@ -96,12 +105,40 @@ module.exports = {
             .then(function (data) {
               // Then add the association to UserPodcasts
               var user = req.user || mockUser();
-              //console.log(chalk.blue(Object.keys(db.db)));
-              db.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+              sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
             });
           }
         });
       }
+    })
+    .then(function () {
+      return helpers.getFeed(req.body.feedUrl);
+    })
+    .then((data) => {
+      console.log(chalk.blue('Line 108 | Data: ', JSON.stringify(data.data, null, 2)));
+      return Promise.each(data.data, (episode) => {
+        if (config.debug) {
+          console.log(chalk.blue('Adding Podcast Episode...'));
+          console.log(chalk.white(episode.title));
+        }
+        if(episode) {
+          sequelize.Episode.create({
+            title: episode.title,
+            description: episode.description,
+            length: episode.duration,
+            releaseDate: episode.published,
+            url: episode.enclosure.url,
+            PodcastId: podcastID
+          });
+          return Promise.resolve();
+        } else {
+          return Promise.reject();
+        }
+      });
+    })
+    .then(function () {
+      var user = req.user || mockUser();
+      sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") SELECT ' + user.id + ' as "UserId", id as "EpisodeId", true as "isInInbox", CURRENT_TIMESTAMP as "createdAt", CURRENT_TIMESTAMP as "updatedAt" FROM "Episodes" WHERE "PodcastId" = ' + podcastID + ' ORDER BY "releaseDate" DESC LIMIT 10');
     })
     .then(function (data) {
       res.status(201).send(data);

@@ -7,7 +7,7 @@ const podcastRouter = require('./routers/podcasts');
 const userRouter = require('./routers/users');
 const episodeRouter = require('./routers/episodes');
 const playlistRouter = require('./routers/playlists');
-const secret = require('./secret.json');
+const secret = require('./config/secret.json');
 const jwt = require('jsonwebtoken');
 const app = express();
 
