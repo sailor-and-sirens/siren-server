@@ -184,10 +184,73 @@ var seedData = function () {
   .then(() => console.log(chalk.magenta('Seeding Playlists')))
   .then(() => Playlist.create({ name: 'Bookmarks', UserId: 1, createdAt: new Date(), updatedAt: new Date() }))  //1
   .then(() => Playlist.create({ name: 'Listening To', UserId: 1, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Monday', UserId: 1, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Tuesday', UserId: 1, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Wednesday', UserId: 1, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Thursday', UserId: 1, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Friday', UserId: 1, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Weekend', UserId: 1, createdAt: new Date(), updatedAt: new Date()}))
   .then(() => Playlist.create({ name: 'Bookmarks', UserId: 2, createdAt: new Date(), updatedAt: new Date() }))  //1
   .then(() => Playlist.create({ name: 'Listening To', UserId: 2, createdAt: new Date(), updatedAt: new Date()}))
   .then(() => Playlist.create({ name: 'Bookmarks', UserId: 3, createdAt: new Date(), updatedAt: new Date() }))  //1
   .then(() => Playlist.create({ name: 'Listening To', UserId: 3, createdAt: new Date(), updatedAt: new Date()}))
   .then(() => Playlist.create({ name: 'Bookmarks', UserId: 4, createdAt: new Date(), updatedAt: new Date() }))  //1
-  .then(() => Playlist.create({ name: 'Listening To', UserId: 4, createdAt: new Date(), updatedAt: new Date()}));
+  .then(() => Playlist.create({ name: 'Listening To', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => console.log(chalk.magenta('Seeding Episodes')))
+  .then(() => Episode.bulkCreate([
+    {
+      title: '#234: Marie Kondo -- The Japanese Tidying Master',
+      description: 'Marie Kondo (@MarieKondo, also known as \"KonMari\") is a Japanese organizing consultant, author, and entrepreneur.\nShe developed a revolutionary method of organizing known as the KonMari Method, which consists of gathering together everything you own, one category at a time, and then keeping only those things that \"spark joy\" -- as well as choosing a dedicated place to store them. Going far beyond a typical tidying how-to, her method is a way of life and a state of mind.\nMarie captured the findings in her mega-best-selling books, including The Life-Changing Magic of Tidying Up: The Japanese Art of Decluttering and Organizing and its follow-up, Spark Joy: An Illustrated Master Class on the Art of Organizing and Tidying Up. Her books have sold more than seven million copies and have been published in more than forty countries.',
+      length: '01:13:08',
+      releaseDate: 'Sun, 16 Apr 2017 11:53:43 +0000',
+      url: 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Marie_Kondo.mp3?dest-id=189939',
+      PodcastId: 1
+    },
+    {
+      title: '#233: Cory Booker -- Street Fights, 10-Day Hunger Strikes, and Creative Problem-Solving',
+      description: 'Cory Booker (@corybooker) is an American politician and the junior United States Senator from New Jersey.\nI generally have an allergy to politics, but Cory\'s story is endlessly fascinating (e.g., he\'s faced down death threats from gangs, run into burning buildings, and much more), and we have a few years of history together.\nWe cover a lot in this wide-ranging catch-up conversation, including his diet, lessons from early mentors and athletics, routines, books that have had an impact, learning how to "street fight" in New Jersey after receiving a Rhodes Scholarship, and much more.',
+      length: '02:07:06',
+      releaseDate: 'Mon, 10 Apr 2017 13:04:32 +0000',
+      url: 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Cory_Booker.mp3?dest-id=189939',
+      PodcastId: 1
+    },
+    {
+      title: '#232: The Tim Ferriss Radio Hour: Controlling Stress, Nutrition Upgrades, and Improved Health',
+      description: 'Welcome to the second installment of The Tim Ferriss Radio Hour.\nAfter more than 200 conversations with the world\'s top performers, you start to spot certain patterns. These are the shared habits, hacks, philosophies, and tools that are the common threads of success, happiness, health, and wealth.\nThese commonalities were the premise of my most recent book, The New York Times #1 bestseller Tools of Titans -- a compilation of my favorite lessons, routines, and tips of many of my guests.',
+      length: '01:15:50',
+      releaseDate: 'Thu, 06 Apr 2017 13:59:38 +0000',
+      url: 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Radio_Hour_episode_2.mp3?dest-id=189939',
+      PodcastId: 1
+    }
+  ]))
+  .then(() => console.log(chalk.magenta('Seeding UserEpisodes')))
+  .then(() => UserEpisode.bulkCreate([
+    {
+      UserId: 1,
+      EpisodeId: 1,
+      bookmarked: null,
+      liked: null,
+      isInInbox: true,
+      currentTime: null,
+      lastPlayed: null
+    },
+    {
+      UserId: 1,
+      EpisodeId: 2,
+      bookmarked: null,
+      liked: null,
+      isInInbox: true,
+      currentTime: null,
+      lastPlayed: null
+    },
+    {
+      UserId: 1,
+      EpisodeId: 3,
+      bookmarked: null,
+      liked: null,
+      isInInbox: true,
+      currentTime: null,
+      lastPlayed: null
+    },
+  ]));
 };
