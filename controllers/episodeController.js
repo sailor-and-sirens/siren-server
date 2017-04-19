@@ -81,13 +81,13 @@ module.exports = {
           })
           .then(function (data) {
             episodeID = data.id;
-          })
+          });
         } else {
           episodeID = data.id;
         }
       })
       .then(function () {
-        var user = req.user || mockUser();
+        var user = req.user || helpers.mockUser();
         sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") SELECT ' + user.id + ' as "UserId", id as "EpisodeId", true as "isInInbox", CURRENT_TIMESTAMP as "createdAt", CURRENT_TIMESTAMP as "updatedAt" FROM "Episodes" WHERE "PodcastId" = ' + podcastID + ' AND "EpisodeID" = ' + episodeID);
       })
       .then(function (data) {
@@ -95,4 +95,4 @@ module.exports = {
       });
     });
   }
-}
+};
