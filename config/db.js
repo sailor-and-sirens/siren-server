@@ -75,7 +75,7 @@ Episode.hasMany(Action);
 Playlist.belongsTo(User);
 Playlist.belongsToMany(Episode, {through: PlaylistEpisode, onDelete: 'CASCADE'});
 
-db.sync().then(function () {
+db.sync({force: true}).then(function () {
   if (config.debug) {
     console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
   }
