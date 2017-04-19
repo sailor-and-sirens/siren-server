@@ -1,4 +1,6 @@
 const db = require('../config/db');
+const PlaylistEpisode = require('../models').PlaylistEpisode;
+const Playlist = require('../models').Playlist;
 const { getTotalDuration } = require('../middleware/helpers.js');
 
 module.exports = {
@@ -68,6 +70,50 @@ module.exports = {
     })
     .catch(function (err) {
       res.status(400).send({ message: 'Error removing episode from playlist: ' + err});
+      console.error(err);
+    });
+  },
+
+  getEpisodesFromPlaylist: function (req, res) {
+    PlaylistEpisode.findAll({
+      where: {PlaylistId: req.body.playlistId}
+    })
+    .then(function (playlist) {
+      res.status(200).json(playlist);
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error fetching playlist: ' + err});
+      console.error(err);
+    });
+  },
+
+  updatePlaylistTitle: function (req, res) {
+    console.log('hit create playlist', req.body);
+    Playlist.find({
+      where: {PlaylistId: req.body.playlistId}
+    })
+    .then(function (foundPlaylist) {
+      foundPlaylist.update({
+        name: req.body.name
+      }).then(function (updatedPlaylist) {
+        res.status(201).json(updatedPlaylist);
+      });
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error updating playlist title: ' + err});
+      console.error(err);
+    });
+  },
+
+  removePlaylist: function (req, res) {
+    Playlist.destroy({
+      where: {PlaylistId: req.body.playlistId}
+    })
+    .then(function () {
+      res.status(204).send({ messaged: 'Playlist successfully removed'});
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error removing playlist: ' + err});
       console.error(err);
     });
   }
