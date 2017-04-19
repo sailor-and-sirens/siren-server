@@ -20,7 +20,6 @@ module.exports = {
         } else {
           sequelize.User.create(req.body)
           .then(function (data) {
-            console.log(data);
             var userId = data.dataValues.id;
             var tokenData = jwt.sign(_.omit(data, 'password'), config.secret);
             console.log('token: ', tokenData);
