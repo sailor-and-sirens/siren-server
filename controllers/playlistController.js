@@ -21,8 +21,8 @@ module.exports = {
           id: data.id,
           name: data.name,
           createdAt: data.createdAt,
-          totalEpisodeCount: data.Episodes.length,
-          totalEpisodeLength: getTotalDuration(data.Episodes)
+          totalEpisodes: data.Episodes.length,
+          totalTime: getTotalDuration(data.Episodes)
         };
       });
       res.status(200).json(playlistsWithDuration);
