@@ -6,19 +6,6 @@ const parsePodcast  = require('node-podcast-parser');
 const request       = require('request');
 const Promise       = require('bluebird');
 
-var mockUser = function () {
-  var user = {
-    id: 1,
-    username: 'danyadsmith',
-    email: 'danyadsmith@email.com',
-    avatarUrl: 'http://portfolio.pspu.ru/uploads/avatars/noimage.png',
-    password: '$2a$10$unjENmy67P14fIOkdAC0WOBN76Z4zV3wiq8XwFqHWfEUYdt1MJgYi',
-    createdAt: '2017-04-15T18:23:32.674Z',
-    updatedAt: '2017-04-15T18:23:32.674Z'
-  };
-  return user;
-};
-
 var podcastID = 1;
 
 module.exports = {
@@ -42,7 +29,7 @@ module.exports = {
   },
 
   subscribe: function (req, res) {
-    var user = req.user || mockUser();
+    var user = req.user || helpers.mockUser();
     console.log(chalk.white('User: ', JSON.stringify(user)));
     if (config.log) {
       console.log(chalk.blue('Subscribing ' + user.username + ' to Podcast...'));
@@ -77,7 +64,7 @@ module.exports = {
             if (config.debug) {
               console.log(chalk.blue('Line 67 | Data: ', JSON.stringify(data, null, 2)));
             }
-            var user = req.user || mockUser();
+            var user = req.user || helpers.mockUser();
             // Remove hardcoded user - for current testing
             sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
           });
@@ -104,7 +91,7 @@ module.exports = {
             })
             .then(function (data) {
               // Then add the association to UserPodcasts
-              var user = req.user || mockUser();
+              var user = req.user || helpers.mockUser();
               sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
             });
           }
@@ -137,7 +124,7 @@ module.exports = {
       });
     })
     .then(function () {
-      var user = req.user || mockUser();
+      var user = req.user || helpers.mockUser();
       sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") SELECT ' + user.id + ' as "UserId", id as "EpisodeId", true as "isInInbox", CURRENT_TIMESTAMP as "createdAt", CURRENT_TIMESTAMP as "updatedAt" FROM "Episodes" WHERE "PodcastId" = ' + podcastID + ' ORDER BY "releaseDate" DESC LIMIT 10');
     })
     .then(function (data) {
