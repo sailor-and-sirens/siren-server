@@ -44,7 +44,7 @@ module.exports = {
   subscribe: function (req, res) {
     var user = req.user || mockUser();
     console.log(chalk.white('User: ', JSON.stringify(user)));
-    if (config.debug) {
+    if (config.log) {
       console.log(chalk.blue('Subscribing ' + user.username + ' to Podcast...'));
       console.log(chalk.white(req.body.collectionName));
     }
@@ -117,7 +117,7 @@ module.exports = {
     .then((data) => {
       console.log(chalk.blue('Line 108 | Data: ', JSON.stringify(data.data, null, 2)));
       return Promise.each(data.data, (episode) => {
-        if (config.debug) {
+        if (config.log) {
           console.log(chalk.blue('Adding Podcast Episode...'));
           console.log(chalk.white(episode.title));
         }
