@@ -1,6 +1,8 @@
+const chalk = require('chalk');
 const sanitize = require('sanitize-html');
 const parsePodcast = require('node-podcast-parser');
 const request = require('request');
+const Promise = require('bluebird');
 
 var secondstotime = (secs) => {
   var t = new Date(1970,0,1);
@@ -19,28 +21,30 @@ var feedSanitizer = (data) => {
   });
   return data;
 };
-// take in a callback function or return a promise...
-var getFeed = (feedUrl) => {
-  request(feedUrl, (err, response, data) => {
-    if (err) {
-      console.error('Network error', err);
-      return;
-    }
-    parsePodcast(data, (err, data) => {
+// take in a callback function or return a promise..
+var asyncGetFeed = (feedUrl) => {
+  return new Promise(function (resolve, reject) {
+    request(feedUrl, (err, response, data) => {
       if (err) {
-        console.error('Parsing error', err);
-        return;
+        console.error(chalk.red(err));
+        reject(err);
       }
-      data.episodes = feedSanitizer(data.episodes);
-      console.log(data);
-      return data;
+      parsePodcast(data, (err, data) => {
+        if (err) {
+          console.error(chalk.red('Parsing error', err));
+          return;
+        }
+        data = feedSanitizer(data.episodes);
+        //console.log(chalk.white(JSON.stringify(data, null, 2)));
+        resolve({ response: response, data: data});
+      });
     });
   });
 };
 
 module.exports = {
   feedSanitizer: feedSanitizer,
-  getFeed: getFeed
+  getFeed: asyncGetFeed
 };
 
 

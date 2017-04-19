@@ -1,4 +1,4 @@
-const db = require('../middleware/db');
+const db = require('../config/db');
 
 module.exports = {
   createEpisode: function (req, res) {

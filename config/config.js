@@ -1,6 +1,7 @@
 // SERVER
 exports.port = process.env.PORT || 3000;
-exports.debug = true;
+exports.debug = false;
+exports.log = true;
 
 // DATABASE CONFIGURATION
 exports.dbEnv = process.env.NODE_ENV || 'development';

@@ -2,9 +2,7 @@
 
 const chalk     = require('chalk');
 const Sequelize = require('sequelize');
-//const env       = process.env.NODE_ENV || 'development';
-const config    = require('../config/config');
-//const dbConfig  = require(__dirname + '/../config/db.js')[env];
+const config    = require('./config');
 var db          = null;
 
 if (process.env.DATABASE_URL) {
