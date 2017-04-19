@@ -27,8 +27,8 @@ module.exports = {
     var user = req.user || helpers.mockUser();
     console.log(chalk.white('User: ', JSON.stringify(user)));
     if (config.log) {
-      console.log(chalk.blue('Subscribing ' + user.username + ' to Podcast...'));
-      console.log(chalk.white(req.body.podcast.collectionName));
+      console.log(chalk.blue('Subscribing ' + user.username + ' to Episode...'));
+      console.log(chalk.white(req.body.episode.title));
     }
     var params = {
       artistId: req.body.podcast.artistId,
@@ -88,7 +88,7 @@ module.exports = {
       })
       .then(function () {
         var user = req.user || helpers.mockUser();
-        sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") SELECT ' + user.id + ' as "UserId", id as "EpisodeId", true as "isInInbox", CURRENT_TIMESTAMP as "createdAt", CURRENT_TIMESTAMP as "updatedAt" FROM "Episodes" WHERE "PodcastId" = ' + podcastID + ' AND "EpisodeID" = ' + episodeID);
+        sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") VALUES (' + user.id + ', ' + episodeID + ', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
       })
       .then(function (data) {
         res.status(201).send(data);
