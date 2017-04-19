@@ -6,6 +6,18 @@ const helpers = require('../helpers.js');
 const parsePodcast = require('node-podcast-parser');
 const request = require('request');
 
+var mockUser = function () {
+  var user = {
+    id: 1,
+    username: 'danyadsmith',
+    email: 'danyadsmith@email.com',
+    avatarUrl: 'http://portfolio.pspu.ru/uploads/avatars/noimage.png',
+    password: '$2a$10$unjENmy67P14fIOkdAC0WOBN76Z4zV3wiq8XwFqHWfEUYdt1MJgYi',
+    createdAt: '2017-04-15T18:23:32.674Z',
+    updatedAt: '2017-04-15T18:23:32.674Z'
+  };
+  return user;
+};
 
 module.exports = {
   getFeed: function (req, res) {
@@ -28,6 +40,9 @@ module.exports = {
   },
 
   subscribe: function (req, res) {
+    var user = req.user || mockUser();
+    console.log(chalk.white('User: ', JSON.stringify(user)));
+
     var params = {
       artistId: req.body.artistId,
       artistName: req.body.artistName,
@@ -44,22 +59,46 @@ module.exports = {
       }
     })
     .then(function (data) {
+      console.log(chalk.blue('Data: ', JSON.stringify(data, null, 2)));
+      console.log(chalk.blue('on line 62...'));
+      // If the Podcast has not been written to the database:
       if (!data) {
+        // Create the Podcast record
         db.Podcast.create(params)
           .then(function (data) {
+            // Then Insert the Podcast into UserPodcasts
+            console.log(chalk.blue('Data: ', JSON.stringify(data, null, 2)));
+            console.log(chalk.blue('on line 67...'));
+            var user = req.user || mockUser();
+            //console.log(chalk.blue(Object.keys(db.db)));
             // Remove hardcoded user - for current testing
-            db.db.sequelize.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(1, ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+            db.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
           });
       } else {
+        // If the Podcast has been written to the database
+        // Check to see if this is already in UserPodcasts
         db.UserPodcast.find({
           where: {
             PodcastId: data.id,
-            UserId: 1
+            UserId: user.id
           }
         })
         .then(function (data) {
+          console.log(chalk.blue('Data: ', JSON.stringify(data, null, 2)));
+          console.log(chalk.blue('on line 87...'));
           if(!data) {
-            db.db.sequelize.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(1, ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+            // If not, get a reference to the Podcast record
+            db.Podcast.findOne({
+              where: {
+                feedUrl: params.feedUrl
+              }
+            })
+            .then(function (data) {
+              // Then add the association to UserPodcasts
+              var user = req.user || mockUser();
+              //console.log(chalk.blue(Object.keys(db.db)));
+              db.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+            });
           }
         });
       }
