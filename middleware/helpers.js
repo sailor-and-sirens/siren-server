@@ -42,9 +42,23 @@ var asyncGetFeed = (feedUrl) => {
   });
 };
 
+var mockUser = function () {
+  var user = {
+    id: 1,
+    username: 'danyadsmith',
+    email: 'danyadsmith@email.com',
+    avatarUrl: 'http://portfolio.pspu.ru/uploads/avatars/noimage.png',
+    password: '$2a$10$unjENmy67P14fIOkdAC0WOBN76Z4zV3wiq8XwFqHWfEUYdt1MJgYi',
+    createdAt: '2017-04-15T18:23:32.674Z',
+    updatedAt: '2017-04-15T18:23:32.674Z'
+  };
+  return user;
+};
+
 module.exports = {
   feedSanitizer: feedSanitizer,
-  getFeed: asyncGetFeed
+  getFeed: asyncGetFeed,
+  mockUser: mockUser
 };
 
 
