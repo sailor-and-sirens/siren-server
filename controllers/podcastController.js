@@ -1,8 +1,8 @@
 const chalk = require('chalk');
 //const config = require('../config/config');
-const db = require('../middleware/db');
+const db = require('../config/db');
 //const podcastParser = require('podcast-parser');
-const helpers = require('../helpers.js');
+const helpers = require('../middleware/helpers.js');
 const parsePodcast = require('node-podcast-parser');
 const request = require('request');
 

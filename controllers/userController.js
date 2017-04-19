@@ -1,4 +1,4 @@
-const db = require('../middleware/db');
+const db = require('../config/db');
 const jwt = require('jsonwebtoken');
 const config = require('../secret.json');
 const bcrypt = require('bcrypt');
