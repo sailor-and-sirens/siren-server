@@ -62,6 +62,10 @@ module.exports = {
         console.log(chalk.blue('Line 108 | Episode Data Returned from Request: ', JSON.stringify(req.body.episode, null, 2)));
       }
       var episode = req.body.episode;
+      episode.subtitle = episode.description;
+      episode.pubDate = episode.published;
+      delete episode.description;
+      delete episode.releaseDate;
 
       sequelize.Episode.findOne({
         where: {
@@ -77,7 +81,8 @@ module.exports = {
             length: episode.duration,
             releaseDate: episode.published,
             url: episode.enclosure.url,
-            PodcastId: podcastID
+            PodcastId: podcastID,
+            feed: episode
           })
           .then(function (data) {
             episodeID = data.id;
