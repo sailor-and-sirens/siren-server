@@ -19,7 +19,7 @@ var feedSanitizer = (data) => {
   });
   return data;
 };
-
+// take in a callback function or return a promise...
 var getFeed = (feedUrl) => {
   request(feedUrl, (err, response, data) => {
     if (err) {

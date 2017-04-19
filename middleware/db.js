@@ -63,26 +63,27 @@ var Action = db.define('Action', {
 
 var PlaylistEpisode = db.define('PlaylistEpisode', {});
 
-User.belongsToMany(Podcast, {through: 'UserPodcasts', onDelete: 'CASCADE'});
-User.belongsToMany(Episode, {through: 'UserEpisodes', as: 'Inbox', onDelete: 'CASCADE'});
+User.belongsToMany(Podcast, {through: UserPodcast, onDelete: 'CASCADE'});
+User.belongsToMany(Episode, {through: UserEpisode, onDelete: 'CASCADE'});
 User.hasMany(Playlist);
 User.hasMany(Action);
-Podcast.belongsToMany(User, {through: 'UserPodcasts', onDelete: 'CASCADE'});
+Podcast.belongsToMany(User, {through: UserPodcast, onDelete: 'CASCADE'});
 Podcast.hasMany(Episode);
 Podcast.hasMany(Action);
 Episode.belongsTo(Podcast, {onDelete: 'CASCADE'});
-Episode.belongsToMany(Playlist, {through: 'PlaylistEpisodes', onDelete: 'CASCADE'});
-Episode.belongsToMany(User, {through: UserEpisode});
+Episode.belongsToMany(Playlist, {through: PlaylistEpisode, onDelete: 'CASCADE'});
+Episode.belongsToMany(User, {through: UserEpisode, onDelete: 'CASCADE'});
 Episode.hasMany(Action);
 Playlist.belongsTo(User);
-Playlist.belongsToMany(Episode, {through: PlaylistEpisode});
+Playlist.belongsToMany(Episode, {through: PlaylistEpisode, onDelete: 'CASCADE'});
 
-db.sync({force: true}).then(function () {
+db.sync().then(function () {
   if (config.debug) {
     console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
   }
   return null;
 }).catch(function (error) {
+  console.error(chalk.red(Object.keys(error)));
   console.error(chalk.red(error.message));
 });
 
