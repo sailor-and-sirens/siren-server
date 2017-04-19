@@ -252,5 +252,11 @@ var seedData = function () {
       currentTime: null,
       lastPlayed: null
     },
+  ]))
+  .then(() => console.log(chalk.magenta('Seeding PlaylistEpisodes')))
+  .then(() => PlaylistEpisode.bulkCreate([
+    {PlaylistId: 3, EpisodeId: 1},
+    {PlaylistId: 3, EpisodeId: 2},
+    {PlaylistId: 3, EpisodeId: 3}
   ]));
 };

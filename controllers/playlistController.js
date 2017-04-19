@@ -1,10 +1,41 @@
 const db = require('../config/db');
+const { getTotalDuration } = require('../middleware/helpers.js');
 
 module.exports = {
 
+  getPlaylistsForAddPlaylistModal: function (req, res) {
+    db.Playlist.findAll({
+      where: {
+        name: {
+          $notIn: ['Listening To', 'Bookmarks']
+        },
+        UserId: req.user.id
+      },
+      attributes: ['id', 'name', 'createdAt'],
+      include: { model: db.Episode, attributes: ['length'] }
+    })
+    .then(function (playlists) {
+      let playlistsWithDuration = playlists.map(playlist => {
+        let data = playlist.dataValues;
+        return {
+          id: data.id,
+          name: data.name,
+          createdAt: data.createdAt,
+          totalEpisodeCount: data.Episodes.length,
+          totalEpisodeLength: getTotalDuration(data.Episodes)
+        };
+      });
+      res.status(200).json(playlistsWithDuration);
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error retrieving playlists: ' + err});
+      console.error(err);
+    });
+  },
+
   createPlaylist: function (req, res) {
     db.Playlist.findOrCreate({
-      where: {name: req.body.name, UserId: req.body.userId}
+      where: {name: req.body.name, UserId: req.user.id}
     })
     .then(function (playlist) {
       res.status(201).json(playlist);
