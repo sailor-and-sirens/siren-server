@@ -1,6 +1,20 @@
 const db = require('../config/db');
 
 module.exports = {
+
+  createPlaylist: function (req, res) {
+    db.Playlist.findOrCreate({
+      where: {name: req.body.name, UserId: req.body.userId}
+    })
+    .then(function (playlist) {
+      res.status(201).json(playlist);
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error creating playlist: ' + err});
+      console.error(err);
+    });
+  },
+
   addEpisodeToPlaylist: function (req, res) {
     db.PlaylistEpisode.findOrCreate({
       where: {PlaylistId: req.body.playlistId, EpisodeId: req.body.episodeId}
