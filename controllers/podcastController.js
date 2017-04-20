@@ -9,7 +9,7 @@ const Promise       = require('bluebird');
 var podcastID = 1;
 
 module.exports = {
-   getFeed: function (req, res) {
+  getFeed: function (req, res) {
     request(req.query.url, (err, response, data) => {
       if (err) {
         console.error('Network error', err);
@@ -20,7 +20,7 @@ module.exports = {
           console.error('Parsing error', err);
           return;
         }
-        episodes = helpers.feedSanitizer(podcast.episodes);
+        var episodes = helpers.feedSanitizer(podcast.episodes);
         console.log(chalk.yellow(req.user));
         res.status(200).send(episodes);
       });
