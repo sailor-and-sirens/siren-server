@@ -76,15 +76,28 @@ Episode.hasMany(Action);
 Playlist.belongsTo(User);
 Playlist.belongsToMany(Episode, {through: PlaylistEpisode, onDelete: 'CASCADE'});
 
-db.sync(/*{force: true}*/).then(function () {
-  if (config.debug) {
-    console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
-  }
-  return null;
-}).catch(function (error) {
-  console.error(chalk.red(Object.keys(error)));
-  console.error(chalk.red(error.message));
-});
+
+if (config.dbChangeSchema) {
+  db.sync(config.dbForceSync).then(function () {
+    if (config.debug) {
+      console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
+    }
+    return null;
+  }).catch(function (error) {
+    console.error(chalk.red(Object.keys(error)));
+    console.error(chalk.red(error.message));
+  });
+} else {
+  db.sync().then(function () {
+    if (config.debug) {
+      console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
+    }
+    return null;
+  }).catch(function (error) {
+    console.error(chalk.red(Object.keys(error)));
+    console.error(chalk.red(error.message));
+  });
+}
 
 module.exports = {
   db: db,
