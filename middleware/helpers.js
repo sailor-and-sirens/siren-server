@@ -14,14 +14,13 @@ var secondstotime = (secs) => {
 };
 
 var feedSanitizer = (data) => {
-  return data.map((item) => {
+  data.forEach((item) => {
     item.duration = secondstotime(item.duration);
     item.title = sanitize(item.title);
     item.description = sanitize(item.description);
-    return item;
   });
+  return data;
 };
-
 
 // take in a callback function or return a promise..
 var asyncGetFeed = (feedUrl) => {

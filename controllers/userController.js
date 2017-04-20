@@ -20,6 +20,7 @@ module.exports = {
         } else {
           sequelize.User.create(req.body)
           .then(function (data) {
+            console.log(data);
             var userId = data.dataValues.id;
             var tokenData = jwt.sign(_.omit(data, 'password'), config.secret);
             console.log('token: ', tokenData);
@@ -81,15 +82,16 @@ module.exports = {
     console.log('BookmarkEpisode ran!', req.body);
     sequelize.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
       .then((record) => {
-        console.log('playlist record: ', record, 'record.id: ', record.id);
-        if (req.body.bookmark) {
-          db.PlaylistEpisode.create({playlistId: record.id, episodeId: req.body.id});
+        if (record) {
+          record.update({
+            bookmarked: req.body.bookmark
+          })
+          .then(function () {
+            res.send(201);
+          });
         } else {
-          db.PlaylistEpisode.destroy({playlistId: record.id, episodeId: req.body.id})
+          res.status(400).send({message: 'User not found'});
         }
-      })
-      .catch((error) => {
-        console.warn('Error: ', error);
       });
   },
 
@@ -105,9 +107,6 @@ module.exports = {
     .then(function (data) {
       var inbox = _.chain(data[0]).keyBy('EpisodeId');
       res.status(201).send(inbox);
-    })
-    .catch((error) => {
-      console.warn('Error: ', error);
     });
   }
 };
