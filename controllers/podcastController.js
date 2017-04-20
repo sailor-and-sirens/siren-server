@@ -9,7 +9,7 @@ const Promise       = require('bluebird');
 var podcastID = 1;
 
 module.exports = {
-   getFeed: function (req, res) {
+  getFeed: function (req, res) {
     request(req.query.url, (err, response, data) => {
       if (err) {
         console.error('Network error', err);
