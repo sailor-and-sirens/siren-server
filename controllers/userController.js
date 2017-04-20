@@ -77,15 +77,15 @@ module.exports = {
       });
   },
 
-  bookmarkEpisode: function (req, res) {
+  bookmarkEpisode: function (req) {
     console.log('BookmarkEpisode ran!', req.body);
     sequelize.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
       .then((record) => {
         console.log('playlist record: ', record, 'record.id: ', record.id);
         if (req.body.bookmark) {
-          db.PlaylistEpisode.create({playlistId: record.id, episodeId: req.body.id});
+          sequelize.PlaylistEpisode.create({playlistId: record.id, episodeId: req.body.id});
         } else {
-          db.PlaylistEpisode.destroy({playlistId: record.id, episodeId: req.body.id})
+          sequelize.PlaylistEpisode.destroy({playlistId: record.id, episodeId: req.body.id});
         }
       })
       .catch((error) => {

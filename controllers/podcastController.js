@@ -20,7 +20,7 @@ module.exports = {
           console.error('Parsing error', err);
           return;
         }
-        episodes = helpers.feedSanitizer(podcast.episodes);
+        var episodes = helpers.feedSanitizer(podcast.episodes);
         console.log(chalk.yellow(req.user));
         res.status(200).send(episodes);
       });
