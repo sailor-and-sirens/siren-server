@@ -17,7 +17,10 @@ var feedSanitizer = (data) => {
   return data.map((item) => {
     item.duration = secondstotime(item.duration);
     item.title = sanitize(item.title);
-    item.description = sanitize(item.description);
+    item.description = sanitize(item.description, {
+      allowedTags: [/* 'a' */],
+      allowedAttributes: {/* 'a': [ 'href' ] */}
+    });
     return item;
   });
 };
