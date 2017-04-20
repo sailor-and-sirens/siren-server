@@ -8,6 +8,7 @@ playlistRouter.post('/create-playlist', playlistController.createPlaylist);
 playlistRouter.delete('/remove-playlist', playlistController.removePlaylist);
 playlistRouter.delete('/remove-episode', playlistController.removeEpisodeFromPlaylist);
 playlistRouter.get('/playlist-episodes', playlistController.getEpisodesFromPlaylist);
+playlistRouter.post('/get-playlists', playlistController.getPlaylists);
 playlistRouter.put('/update-title', playlistController.updatePlaylistTitle);
 
 module.exports = playlistRouter;

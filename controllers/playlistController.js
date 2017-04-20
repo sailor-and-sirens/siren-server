@@ -1,4 +1,5 @@
 const db = require('../config/db');
+
 const PlaylistEpisode = require('../models').PlaylistEpisode;
 const Playlist = require('../models').Playlist;
 const { getTotalDuration } = require('../middleware/helpers.js');
@@ -48,6 +49,31 @@ module.exports = {
     });
   },
 
+
+  // include: [
+  //   {model: db.Language},
+  //   {model: db.Category},
+  //   {model: db.Subcategory},
+  //   {model: db.User}
+  // ]
+
+  getPlaylists: function (req, res) {
+    db.Playlist.findAll({
+      where: {UserId: req.user.id},
+      include: [
+        {model: db.Episode}
+      ]
+    })
+    .then(function (playlists) {
+      console.log('playlists?', playlists);
+      res.status(200).send(playlists);
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error fetching playlist: ' + err});
+      console.error(err);
+    });
+  },
+
   addEpisodeToPlaylist: function (req, res) {
     db.PlaylistEpisode.findOrCreate({
       where: {PlaylistId: req.body.playlistId, EpisodeId: req.body.episodeId}
@@ -75,7 +101,7 @@ module.exports = {
   },
 
   getEpisodesFromPlaylist: function (req, res) {
-    PlaylistEpisode.findAll({
+    db.PlaylistEpisode.findAll({
       where: {PlaylistId: req.body.playlistId}
     })
     .then(function (playlist) {
@@ -89,7 +115,7 @@ module.exports = {
 
   updatePlaylistTitle: function (req, res) {
     console.log('hit create playlist', req.body);
-    Playlist.find({
+    db.Playlist.find({
       where: {PlaylistId: req.body.playlistId}
     })
     .then(function (foundPlaylist) {
@@ -106,7 +132,7 @@ module.exports = {
   },
 
   removePlaylist: function (req, res) {
-    Playlist.destroy({
+    db.Playlist.destroy({
       where: {PlaylistId: req.body.playlistId}
     })
     .then(function () {

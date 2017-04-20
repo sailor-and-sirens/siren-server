@@ -15,20 +15,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // AUTHENTICATION MIDDLEWEAR: comment out if testing without token in auth header
-// app.use(function (req, res, next) {
-//   if (!req.url.includes('/createUser') && !req.url.includes('/login')) {
-//     var token = req.headers.authorization;
-//     if (!token) {
-//       res.status(500).send('No authorization header with request.');
-//       return;
-//     } else {
-//       var userObj = jwt.decode(token, secret.secret);
-//       req.user = userObj;
-//       return next();
-//     }
-//   }
-//   return next();
-// });
+app.use(function (req, res, next) {
+  if (!req.url.includes('/createUser') && !req.url.includes('/login')) {
+    var token = req.headers.authorization;
+    if (!token) {
+      res.status(500).send('No authorization header with request.');
+      return;
+    } else {
+      var userObj = jwt.decode(token, secret.secret);
+      req.user = userObj;
+      return next();
+    }
+  }
+  return next();
+});
 
 app.use(morgan('dev'));
 app.use(function (req, res, next) {
