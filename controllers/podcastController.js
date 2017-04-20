@@ -15,15 +15,14 @@ module.exports = {
         console.error('Network error', err);
         return;
       }
-      parsePodcast(data, (err, data) => {
+      parsePodcast(data, (err, podcast) => {
         if (err) {
           console.error('Parsing error', err);
           return;
         }
-        data.episodes = helpers.feedSanitizer(data.episodes);
-        console.log(data);
+        episodes = helpers.feedSanitizer(podcast.episodes);
         console.log(chalk.yellow(req.user));
-        res.send(JSON.stringify(data));
+        res.status(200).send(episodes);
       });
     });
   },
