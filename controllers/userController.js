@@ -28,8 +28,8 @@ module.exports = {
             return userId;
           })
           .then(function (userId) {
-            sequelize.Playlist.create({name: 'Bookmarked', 'UserId': userId});
-            sequelize.Playlist.create({name: 'Currently Playing', 'UserId': userId});
+            sequelize.Playlist.create({name: 'Bookmarks', 'UserId': userId});
+            sequelize.Playlist.create({name: 'Listening To', 'UserId': userId});
           })
           .catch((error) => {
             console.warn('Error: ', error);
