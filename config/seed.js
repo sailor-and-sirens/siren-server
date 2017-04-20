@@ -252,5 +252,19 @@ var seedData = function () {
       currentTime: null,
       lastPlayed: null
     },
+  ]))
+  .then(() => console.log(chalk.magenta('Seeding PlaylistEpisodes')))
+  .then(() => PlaylistEpisode.bulkCreate([
+    {PlaylistId: 3, EpisodeId: 1}, // mon 1, 2, 3
+    {PlaylistId: 3, EpisodeId: 2},
+    {PlaylistId: 3, EpisodeId: 3},
+    {PlaylistId: 4, EpisodeId: 1}, // tues 1, 2
+    {PlaylistId: 4, EpisodeId: 2},
+    {PlaylistId: 5, EpisodeId: 1}, // wed 1
+    {PlaylistId: 6, EpisodeId: 1}, // thurs 1, 3
+    {PlaylistId: 6, EpisodeId: 3},
+    {PlaylistId: 7, EpisodeId: 2}, // fri
+    {PlaylistId: 8, EpisodeId: 2}, // weekend 2, 3
+    {PlaylistId: 8, EpisodeId: 3}
   ]));
 };

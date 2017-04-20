@@ -59,10 +59,24 @@ var mockUser = function () {
   return user;
 };
 
+var timeToSeconds = (timeString) => {
+  let hms = timeString.split(':');
+  let hours = +hms[0] * 60 * 60;
+  let minutes = +hms[1] * 60;
+  let seconds = +hms[2];
+  return hours + minutes + seconds;
+};
+
+var getTotalDuration = (episodes) => {
+  let duration = 0;
+  if (episodes.length === 0) return 0;
+  episodes.forEach(episode => duration += timeToSeconds(episode.dataValues.length));
+  return Math.floor(duration / 60);
+};
+
 module.exports = {
   feedSanitizer: feedSanitizer,
   getFeed: asyncGetFeed,
-  mockUser: mockUser
+  mockUser: mockUser,
+  getTotalDuration: getTotalDuration
 };
-
-
