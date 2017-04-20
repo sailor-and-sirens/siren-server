@@ -76,7 +76,6 @@ Episode.hasMany(Action);
 Playlist.belongsTo(User);
 Playlist.belongsToMany(Episode, {through: PlaylistEpisode, onDelete: 'CASCADE'});
 
-
 if (config.dbChangeSchema) {
   db.sync(config.dbForceSync).then(function () {
     if (config.debug) {
