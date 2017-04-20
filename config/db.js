@@ -27,7 +27,8 @@ var Episode = db.define('Episode', {
   description: Sequelize.TEXT,
   length: Sequelize.STRING, // changed from time - em
   releaseDate: Sequelize.DATEONLY,
-  url: Sequelize.STRING
+  url: Sequelize.STRING,
+  feed: Sequelize.JSON
 });
 
 var Playlist = db.define('Playlist', {
@@ -75,15 +76,27 @@ Episode.hasMany(Action);
 Playlist.belongsTo(User);
 Playlist.belongsToMany(Episode, {through: PlaylistEpisode, onDelete: 'CASCADE'});
 
-db.sync().then(function () {
-  if (config.debug) {
-    console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
-  }
-  return null;
-}).catch(function (error) {
-  console.error(chalk.red(Object.keys(error)));
-  console.error(chalk.red(error.message));
-});
+if (config.dbChangeSchema) {
+  db.sync(config.dbForceSync).then(function () {
+    if (config.debug) {
+      console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
+    }
+    return null;
+  }).catch(function (error) {
+    console.error(chalk.red(Object.keys(error)));
+    console.error(chalk.red(error.message));
+  });
+} else {
+  db.sync().then(function () {
+    if (config.debug) {
+      console.log(chalk.green('Initialized the ' + config.dbEnv + ' database: ' + config.dbName));
+    }
+    return null;
+  }).catch(function (error) {
+    console.error(chalk.red(Object.keys(error)));
+    console.error(chalk.red(error.message));
+  });
+}
 
 module.exports = {
   db: db,
