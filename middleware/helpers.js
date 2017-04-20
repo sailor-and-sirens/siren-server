@@ -54,7 +54,7 @@ var getTotalDuration = (episodes) => {
   let duration = 0;
   if (episodes.length === 0) return 0;
   episodes.forEach(episode => duration += timeToSeconds(episode.dataValues.length));
-  return Math.floor(duration / 60);
+  return Math.floor(duration / 60) < 999 ? Math.floor(duration / 60) : 999;
 };
 
 module.exports = {
