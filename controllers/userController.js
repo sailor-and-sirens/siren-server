@@ -104,6 +104,11 @@ module.exports = {
     sequelize.db.query(query)
     .then(function (data) {
       var inbox = _.chain(data[0]).keyBy('EpisodeId');
+      inbox.replace(/\"([^(\")"]+)\":/g,'$1:');
+      if (config.debug) {
+        console.log(chalk.blue.bold('Testing Format of Inbox Object......'));
+        console.log(chalk.white(inbox));
+      }
       res.status(201).send(inbox);
     })
     .catch((error) => {
