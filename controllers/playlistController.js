@@ -1,7 +1,4 @@
 const db = require('../config/db');
-
-const PlaylistEpisode = require('../models').PlaylistEpisode;
-const Playlist = require('../models').Playlist;
 const { getTotalDuration } = require('../middleware/helpers.js');
 
 module.exports = {
@@ -48,14 +45,6 @@ module.exports = {
       console.error(err);
     });
   },
-
-
-  // include: [
-  //   {model: db.Language},
-  //   {model: db.Category},
-  //   {model: db.Subcategory},
-  //   {model: db.User}
-  // ]
 
   getPlaylists: function (req, res) {
     db.Playlist.findAll({
