@@ -1,8 +1,10 @@
-const db = require('../config/db');
 const jwt = require('jsonwebtoken');
+const chalk = require('chalk');
 const config = require('../config/secret.json');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
+const sequelize = require('../config/db');
+const helpers = require('../middleware/helpers.js');
 
 module.exports = {
   createUser: function (req, res) {
@@ -10,13 +12,13 @@ module.exports = {
     .then (function (hash) { return hash; })
     .then((hash) => {
       req.body.password = hash;
-      db.User.find({where: {username: req.body.username}});
+      sequelize.User.find({where: {username: req.body.username}});
     })
       .then(function (user) {
         if (user) {
           res.status(409).send({message: 'User already exists'});
         } else {
-          db.User.create(req.body)
+          sequelize.User.create(req.body)
           .then(function (data) {
             console.log(data);
             var userId = data.dataValues.id;
@@ -26,8 +28,8 @@ module.exports = {
             return userId;
           })
           .then(function (userId) {
-            db.Playlist.create({name: 'Bookmarked', 'UserId': userId});
-            db.Playlist.create({name: 'Currently Playing', 'UserId': userId});
+            sequelize.Playlist.create({name: 'Bookmarked', 'UserId': userId});
+            sequelize.Playlist.create({name: 'Currently Playing', 'UserId': userId});
           })
           .catch((error) => {
             console.warn('Error: ', error);
@@ -37,7 +39,7 @@ module.exports = {
   },
 
   checkUser: function (req, res) {
-    db.User.find({where: {username: req.body.username}})
+    sequelize.User.find({where: {username: req.body.username}})
     .then(function (data) {
       if (!data) {
         res.status(400).send({message: 'Incorrect username and/or password'});
@@ -61,7 +63,7 @@ module.exports = {
 
   likeEpisode: function (req, res) {
     console.log('LikeEpisode ran! ', req.body);
-    db.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
+    sequelize.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
       .then((record) => {
         if (record) {
           record.update({
@@ -78,7 +80,7 @@ module.exports = {
 
   bookmarkEpisode: function (req, res) {
     console.log('BookmarkEpisode ran!', req.body);
-    db.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
+    sequelize.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
       .then((record) => {
         if (record) {
           record.update({
@@ -91,5 +93,20 @@ module.exports = {
           res.status(400).send({message: 'User not found'});
         }
       });
+  },
+
+  getInbox: function (req, res) {
+    var user = req.user || helpers.mockUser();
+    console.log(chalk.white('User: ', JSON.stringify(user)));
+    if (config.log) {
+      console.log(chalk.blue('Getting Inbox for ' + user.username + '...'));
+    }
+    var query = 'SELECT * FROM "Inbox" WHERE "username" = ' +  String('\'') + user.username + String('\'');
+
+    sequelize.db.query(query)
+    .then(function (data) {
+      var inbox = _.chain(data[0]).keyBy('EpisodeId');
+      res.status(201).send(inbox);
+    });
   }
 };

@@ -108,14 +108,20 @@ module.exports = {
           console.log(chalk.blue('Adding Podcast Episode...'));
           console.log(chalk.white(episode.title));
         }
+        episode.subtitle = episode.description;
+        episode.pubDate = episode.published;
+        delete episode.description;
+        delete episode.releaseDate;
+
         if(episode) {
           sequelize.Episode.create({
             title: episode.title,
-            description: episode.description,
+            description: episode.subtitle,
             length: episode.duration,
-            releaseDate: episode.published,
+            releaseDate: episode.pubDate,
             url: episode.enclosure.url,
-            PodcastId: podcastID
+            PodcastId: podcastID,
+            feed: episode
           });
           return Promise.resolve();
         } else {

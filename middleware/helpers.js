@@ -21,6 +21,7 @@ var feedSanitizer = (data) => {
   });
   return data;
 };
+
 // take in a callback function or return a promise..
 var asyncGetFeed = (feedUrl) => {
   return new Promise(function (resolve, reject) {
