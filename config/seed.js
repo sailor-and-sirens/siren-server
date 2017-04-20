@@ -207,7 +207,7 @@ var seedData = function () {
       PodcastId: 1,
       feed:   {
         'title': '#234: Marie Kondo -- The Japanese Tidying Master',
-        'published': '2017-04-16T11:53:43.000Z',
+        'pubDate': '2017-04-16T11:53:43.000Z',
         'guid': 'fddb935526c19f0f4c474ba39ed97668',
         'image': 'http://static.libsyn.com/p/assets/5/0/4/a/504adafdd7fa3870/TimFerrissShowArt1400x1400.jpg',
         'enclosure': {
@@ -216,7 +216,7 @@ var seedData = function () {
           'url': 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Marie_Kondo.mp3?dest-id=189939'
         },
         'duration': '01:13:08',
-        'description': 'undefined'
+        'subtitle': 'undefined'
       }
     },
     {
@@ -228,7 +228,7 @@ var seedData = function () {
       PodcastId: 1,
       feed:   {
         'title': '#233: Cory Booker -- Street Fights, 10-Day Hunger Strikes, and Creative Problem-Solving',
-        'published': '2017-04-10T13:04:32.000Z',
+        'pubDate': '2017-04-10T13:04:32.000Z',
         'guid': '7abd091f3ef2713642f7292796c5a48d',
         'image': 'http://static.libsyn.com/p/assets/c/9/e/1/c9e19129c3a18ef6/TimFerrissShowArt-1400x1400.jpg',
         'enclosure': {
@@ -237,7 +237,7 @@ var seedData = function () {
           'url': 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Cory_Booker.mp3?dest-id=189939'
         },
         'duration': '02:07:06',
-        'description': 'undefined'
+        'subtitle': 'undefined'
       }
     },
     {
@@ -249,7 +249,7 @@ var seedData = function () {
       PodcastId: 1,
       feed: {
         'title': '#232: The Tim Ferriss Radio Hour: Controlling Stress, Nutrition Upgrades, and Improved Health',
-        'published': '2017-04-06T13:59:38.000Z',
+        'pubDate': '2017-04-06T13:59:38.000Z',
         'guid': '52a864d037d88215a8333ef2489bdc63',
         'image': 'http://static.libsyn.com/p/assets/4/d/b/2/4db2729e748bdaae/TimFerrissShowArt-1400x1400.jpg',
         'enclosure': {
@@ -258,7 +258,7 @@ var seedData = function () {
           'url': 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Radio_Hour_episode_2.mp3?dest-id=189939'
         },
         'duration': '01:15:50',
-        'description': 'undefined'
+        'subtitle': 'undefined'
       }
     }
   ]))
