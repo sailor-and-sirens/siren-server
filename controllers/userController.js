@@ -78,7 +78,7 @@ module.exports = {
       });
   },
 
-  bookmarkEpisode: function (req, res) {
+  bookmarkEpisode: function (req) {
     console.log('BookmarkEpisode ran!', req.body);
     sequelize.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
       .then((record) => {
