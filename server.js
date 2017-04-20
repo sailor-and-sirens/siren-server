@@ -16,11 +16,7 @@ app.use(bodyParser.json());
 
 // AUTHENTICATION MIDDLEWEAR: comment out if testing without token in auth header
 app.use(function (req, res, next) {
-  if (req.url.includes('/logout')) {
-    delete req.user;
-    res.status(200).send('Logout success.');
-    return;
-  } else if (!req.url.includes('/createUser') && !req.url.includes('/login')) {
+  if (!req.url.includes('/createUser') && !req.url.includes('/login')) {
     var token = req.headers.authorization;
     if (!token) {
       res.status(500).send('No authorization header with request.');
