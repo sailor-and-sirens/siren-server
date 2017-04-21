@@ -1,7 +1,6 @@
 const chalk         = require('chalk');
 const config        = require('../config/config');
 const sequelize     = require('../config/db');
-const helpers       = require('../middleware/helpers.js');
 
 var podcastID = 1;
 var episodeID = 1;
