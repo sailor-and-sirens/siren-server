@@ -157,7 +157,6 @@ module.exports = {
   },
 
   removePlaylist: function (req, res) {
-    console.log('iddd', req.body.playlistId);
     db.Playlist.destroy({
       where: {id: req.body.playlistId}
     })
