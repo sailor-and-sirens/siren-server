@@ -76,6 +76,23 @@ module.exports = {
     });
   },
 
+  addEpisodeToListeningTo: function (req, res) {
+    db.Playlist.find({
+      where: {name: 'Listening To', UserId: req.user.id}
+    })
+    .then(function (playlist) {
+      db.PlaylistEpisode.findOrCreate({
+        where: {PlaylistId: playlist.id, EpisodeId: req.body.episodeId}
+      })
+      .then(function (playlistEpisode) {
+        res.status(201).json(playlistEpisode);
+      });
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error adding episode to Listening To: ' + err});
+    });
+  },
+
   removeEpisodeFromPlaylist: function (req, res) {
     db.PlaylistEpisode.destroy({
       where: {PlaylistId: req.body.playlistId, EpisodeId: req.body.episodeId}
