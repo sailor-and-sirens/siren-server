@@ -1,5 +1,5 @@
 const db = require('../config/db');
-const { getTotalDuration } = require('../middleware/helpers.js');
+const getTotalDuration = require('../middleware/helpers.js');
 
 module.exports = {
 
@@ -15,8 +15,8 @@ module.exports = {
       include: { model: db.Episode, attributes: ['length'] }
     })
     .then(function (playlists) {
-      let playlistsWithDuration = playlists.map(playlist => {
-        let data = playlist.dataValues;
+      var playlistsWithDuration = playlists.map(playlist => {
+        var data = playlist.dataValues;
         return {
           id: data.id,
           name: data.name,
@@ -54,8 +54,8 @@ module.exports = {
       ]
     })
     .then(function (playlists) {
-      let allPlaylists = playlists.map(playlist => {
-        let data = playlist.dataValues;
+      var allPlaylists = playlists.map(playlist => {
+        var data = playlist.dataValues;
         return {
           id: data.id,
           name: data.name,
