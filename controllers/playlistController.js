@@ -90,6 +90,7 @@ module.exports = {
     })
     .catch(function (err) {
       res.status(400).send({ message: 'Error adding episode to Listening To: ' + err});
+      console.error(err);
     });
   },
 
@@ -99,6 +100,24 @@ module.exports = {
     })
     .then(function () {
       res.status(204).send({ messaged: 'Episode successfully removed from playlist'});
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error removing episode from playlist: ' + err});
+      console.error(err);
+    });
+  },
+
+  removeEpisodeFromListeningTo: function (req, res) {
+    db.Playlist.find({
+      where: {name: 'Listening To', UserId: req.user.id}
+    })
+    .then(function (playlist) {
+      db.PlaylistEpisode.destroy({
+        where: {PlaylistId: playlist.id, EpisodeId: req.body.episodeId}
+      })
+      .then(function () {
+        res.status(204).send({ messaged: 'Episode successfully removed from Listening To playlist'});
+      });
     })
     .catch(function (err) {
       res.status(400).send({ message: 'Error removing episode from playlist: ' + err});
