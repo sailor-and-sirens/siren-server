@@ -95,9 +95,9 @@ module.exports = {
         }
         console.log('playlist record: ', record, 'record.id: ', record.id);
         if (req.body.bookmark) {
-          sequelize.PlaylistEpisode.create({playlistId: record.id, episodeId: req.body.id});
+          sequelize.PlaylistEpisode.create({PlaylistId: record.id, EpisodeId: req.body.id});
         } else {
-          sequelize.PlaylistEpisode.destroy({playlistId: record.id, episodeId: req.body.id});
+          sequelize.PlaylistEpisode.destroy({PlaylistId: record.id, EpisodeId: req.body.id});
         }
       });
   },
