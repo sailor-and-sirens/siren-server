@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var sax = require('sax');
 
-module.exports = function parse(feedXML, callback) {
+module.exports = function parse (feedXML, callback) {
   var parser = sax.parser({
     strict: true,
     lowercase: true
@@ -35,7 +35,7 @@ module.exports = function parse(feedXML, callback) {
       node.textMap = {
         'title': true,
         'link': true,
-        'language': function language(text) {
+        'language': function language (text) {
           var lang = text;
           if (!/\w\w-\w\w/i.test(text)) {
             if (lang === 'en') {
@@ -50,10 +50,10 @@ module.exports = function parse(feedXML, callback) {
         },
         'itunes:subtitle': 'description.short',
         'description': 'description.long',
-        'ttl': function ttl(text) {
+        'ttl': function ttl (text) {
           return { ttl: parseInt(text) };
         },
-        'pubDate': function pubDate(text) {
+        'pubDate': function pubDate (text) {
           return { updated: new Date(text) };
         }
       };
@@ -85,10 +85,10 @@ module.exports = function parse(feedXML, callback) {
         'itunes:summary': 'summary',
         'itunes:subtitle': 'subtitle',
         'description': 'description',
-        'pubDate': function pubDate(text) {
+        'pubDate': function pubDate (text) {
           return { published: new Date(text) };
         },
-        'itunes:duration': function itunesDuration(text) {
+        'itunes:duration': function itunesDuration (text) {
           return {
             // parse '1:03:13' into 3793 seconds
             duration: text.split(':').reverse().reduce(function (acc, val, index) {
@@ -129,7 +129,7 @@ module.exports = function parse(feedXML, callback) {
     }
   };
 
-  parser.ontext = parser.oncdata = function handleText(text) {
+  parser.ontext = parser.oncdata = function handleText (text) {
     text = text.trim();
     if (text.length === 0) {
       return;
