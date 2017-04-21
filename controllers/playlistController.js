@@ -54,8 +54,8 @@ module.exports = {
       ]
     })
     .then(function (playlists) {
-      let allPlaylists = playlists.map(playlist => {
-        let data = playlist.dataValues;
+      var allPlaylists = playlists.map(playlist => {
+        var data = playlist.dataValues;
         return {
           id: data.id,
           name: data.name,
