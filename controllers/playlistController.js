@@ -54,8 +54,17 @@ module.exports = {
       ]
     })
     .then(function (playlists) {
-      console.log('playlists?', playlists);
-      res.status(200).send(playlists);
+      let allPlaylists = playlists.map(playlist => {
+        let data = playlist.dataValues;
+        return {
+          id: data.id,
+          name: data.name,
+          createdAt: data.createdAt,
+          Episodes: data.Episodes,
+          totalTime: getTotalDuration(data.Episodes)
+        };
+      });
+      res.status(200).json(allPlaylists);
     })
     .catch(function (err) {
       res.status(400).send({ message: 'Error fetching playlist: ' + err});
