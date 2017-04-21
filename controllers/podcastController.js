@@ -28,7 +28,7 @@ module.exports = {
   },
 
   subscribe: function (req, res) {
-    var user = req.user || helpers.mockUser();
+    var user = req.user;
     console.log(chalk.white('User: ', JSON.stringify(user)));
     if (config.log) {
       console.log(chalk.blue('Subscribing ' + user.username + ' to Podcast...'));
@@ -63,9 +63,10 @@ module.exports = {
             if (config.debug) {
               console.log(chalk.blue('Line 67 | Data: ', JSON.stringify(data, null, 2)));
             }
-            var user = req.user || helpers.mockUser();
-            // Remove hardcoded user - for current testing
-            sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+            var user = req.user;
+            if (user){
+              sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+            }
           });
       } else {
         podcastID = data.id;
@@ -90,8 +91,10 @@ module.exports = {
             })
             .then(function (data) {
               // Then add the association to UserPodcasts
-              var user = req.user || helpers.mockUser();
-              sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+              var user = req.user;
+              if (user) {
+                sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+              }
             });
           }
         });
@@ -129,11 +132,14 @@ module.exports = {
       });
     })
     .then(function () {
-      var user = req.user || helpers.mockUser();
-      sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") SELECT ' + user.id + ' as "UserId", id as "EpisodeId", true as "isInInbox", CURRENT_TIMESTAMP as "createdAt", CURRENT_TIMESTAMP as "updatedAt" FROM "Episodes" WHERE "PodcastId" = ' + podcastID + ' ORDER BY "releaseDate" DESC LIMIT 10');
+      var user = req.user;
+      if (user) {
+        sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") SELECT ' + user.id + ' as "UserId", id as "EpisodeId", true as "isInInbox", CURRENT_TIMESTAMP as "createdAt", CURRENT_TIMESTAMP as "updatedAt" FROM "Episodes" WHERE "PodcastId" = ' + podcastID + ' ORDER BY "releaseDate" DESC LIMIT 10');
     })
     .then(function (data) {
-      res.status(201).send(data);
+      if (data) {
+        res.status(201).send(data);
+      }
     });
   }
 };

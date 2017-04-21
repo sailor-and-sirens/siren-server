@@ -24,7 +24,7 @@ module.exports = {
   },
 
   subscribe: function (req, res) {
-    var user = req.user || helpers.mockUser();
+    var user = req.user;
     console.log(chalk.white('User: ', JSON.stringify(user)));
     if (config.log) {
       console.log(chalk.blue('Subscribing ' + user.username + ' to Episode...'));
@@ -92,11 +92,17 @@ module.exports = {
         }
       })
       .then(function () {
-        var user = req.user || helpers.mockUser();
-        sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") VALUES (' + user.id + ', ' + episodeID + ', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+        var user = req.user;
+        if (user) {
+          sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") VALUES (' + user.id + ', ' + episodeID + ', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+        }
       })
       .then(function (data) {
-        res.status(201).send(data);
+        if (data) {
+          res.status(201).send(data);
+        } else {
+          res.status(500).send('Error subscribing user to Episode: ' + req.body.episode.title);
+        }
       });
     });
   }
