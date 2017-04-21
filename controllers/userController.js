@@ -93,12 +93,12 @@ module.exports = {
         } else {
           res.status(400).send({message: 'User not found'});
         }
-        console.log('playlist record: ', record, 'record.id: ', record.id);
-        if (req.body.bookmark) {
-          sequelize.PlaylistEpisode.create({playlistId: record.id, episodeId: req.body.id});
-        } else {
-          sequelize.PlaylistEpisode.destroy({playlistId: record.id, episodeId: req.body.id});
-        }
+        // console.log('playlist record: ', record, 'record.id: ', record.id);
+        // if (req.body.bookmark) {
+        //   sequelize.PlaylistEpisode.create({playlistId: record.id, episodeId: req.body.id});
+        // } else {
+        //   sequelize.PlaylistEpisode.destroy({playlistId: record.id, episodeId: req.body.id});
+        // }
       });
   },
 
