@@ -5,7 +5,7 @@ SELECT
   "Episodes"."id" as "EpisodeId", "Episodes"."title" as "episodeTitle", "Episodes"."description", "Episodes"."length", "Episodes"."releaseDate", "Episodes"."url", "Episodes"."feed",
   "UserEpisodes"."liked", "UserEpisodes"."bookmarked" as "bookmark"
 FROM
-  "Podcasts", "Episodes", "UserPodcasts", "UserEpisodes", "Users"
+  "Podcasts", "Episodes", "UserEpisodes", "Users"
 WHERE
   "Users"."id" = "UserEpisodes"."UserId" AND
   "Episodes"."id" = "UserEpisodes"."EpisodeId" AND
