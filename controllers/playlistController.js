@@ -14,8 +14,8 @@ module.exports = {
       attributes: ['id', 'name', 'createdAt'],
       include: { model: db.Episode, attributes: ['length'] }
     })
-    .theno(function (playlists) {
-      var polaylistsWithDuration = playlists.map(playlist => {
+    .then(function (playlists) {
+      var playlistsWithDuration = playlists.map(playlist => {
         var data = playlist.dataValues;
         return {
           id: data.id,
