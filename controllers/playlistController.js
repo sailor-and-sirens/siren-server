@@ -157,8 +157,9 @@ module.exports = {
   },
 
   removePlaylist: function (req, res) {
+    console.log('iddd', req.body.playlistId);
     db.Playlist.destroy({
-      where: {PlaylistId: req.body.playlistId}
+      where: {id: req.body.playlistId}
     })
     .then(function () {
       res.status(204).send({ messaged: 'Playlist successfully removed'});
