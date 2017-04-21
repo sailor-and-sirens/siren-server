@@ -1,5 +1,5 @@
 const db = require('../config/db');
-const getTotalDuration = require('../middleware/helpers.js');
+const getTotalDuration = require('../middleware/helpers.js').getTotalDuration;
 
 module.exports = {
 
