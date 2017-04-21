@@ -1,6 +1,5 @@
 const chalk = require('chalk');
 const sanitize = require('sanitize-html');
-const parsePodcast = require('node-podcast-parser');
 const request = require('request');
 const Promise = require('bluebird');
 
@@ -17,10 +16,29 @@ var feedSanitizer = (data) => {
   return data.map((item) => {
     item.duration = secondstotime(item.duration);
     item.title = sanitize(item.title);
-    item.description = sanitize(item.description, {
-      allowedTags: [/* 'a' */],
-      allowedAttributes: {/* 'a': [ 'href' ] */}
-    });
+    if (item.description) {
+      item.description = sanitize(item.description, {
+        allowedTags: [/* 'a' */],
+        allowedAttributes: {/* 'a': [ 'href' ] */}
+      });
+    } else if (item.summary) {
+      item.description = sanitize(item.summary, {
+        allowedTags: [/* 'a' */],
+        allowedAttributes: {/* 'a': [ 'href' ] */}
+      });
+    } else if (item.subtitle) {
+      item.description = sanitize(item.subtitle, {
+        allowedTags: [/* 'a' */],
+        allowedAttributes: {/* 'a': [ 'href' ] */}
+      });
+    } else {
+      item.description = '';
+    }
+    delete item.summary;
+    delete item.subtitle;
+    if (item.duration === 'invalid') {
+      item.duration = '';
+    }
     return item;
   });
 };
@@ -60,15 +78,15 @@ var mockUser = function () {
 };
 
 var timeToSeconds = (timeString) => {
-  let hms = timeString.split(':');
-  let hours = +hms[0] * 60 * 60;
-  let minutes = +hms[1] * 60;
-  let seconds = +hms[2];
+  var hms = timeString.split(':');
+  var hours = +hms[0] * 60 * 60;
+  var minutes = +hms[1] * 60;
+  var seconds = +hms[2];
   return hours + minutes + seconds;
 };
 
 var getTotalDuration = (episodes) => {
-  let duration = 0;
+  var duration = 0;
   if (episodes.length === 0) return 0;
   episodes.forEach(episode => duration += timeToSeconds(episode.dataValues.length));
   return Math.floor(duration / 60);
