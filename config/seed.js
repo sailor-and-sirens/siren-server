@@ -182,7 +182,7 @@ var seedData = function () {
     'createdAt': new Date()
   }))
   .then(() => console.log(chalk.magenta('Seeding Playlists')))
-  .then(() => Playlist.create({ name: 'Bookmarks', UserId: 1, createdAt: new Date(), updatedAt: new Date() }))  //1
+  .then(() => Playlist.create({ name: 'Bookmarks', UserId: 1, createdAt: new Date(), updatedAt: new Date() }))  //4
   .then(() => Playlist.create({ name: 'Listening To', UserId: 1, createdAt: new Date(), updatedAt: new Date()}))
   .then(() => Playlist.create({ name: 'Monday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
   .then(() => Playlist.create({ name: 'Tuesday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
@@ -200,11 +200,24 @@ var seedData = function () {
   .then(() => Episode.bulkCreate([
     {
       title: '#234: Marie Kondo -- The Japanese Tidying Master',
-      description: 'Marie Kondo (@MarieKondo, also known as \"KonMari\") is a Japanese organizing consultant, author, and entrepreneur.\nShe developed a revolutionary method of organizing known as the KonMari Method, which consists of gathering together everything you own, one category at a time, and then keeping only those things that \"spark joy\" -- as well as choosing a dedicated place to store them. Going far beyond a typical tidying how-to, her method is a way of life and a state of mind.\nMarie captured the findings in her mega-best-selling books, including The Life-Changing Magic of Tidying Up: The Japanese Art of Decluttering and Organizing and its follow-up, Spark Joy: An Illustrated Master Class on the Art of Organizing and Tidying Up. Her books have sold more than seven million copies and have been published in more than forty countries.',
+      description: 'Marie Kondo (@MarieKondo, also known as \'KonMari\') is a Japanese organizing consultant, author, and entrepreneur.\nShe developed a revolutionary method of organizing known as the KonMari Method, which consists of gathering together everything you own, one category at a time, and then keeping only those things that \'spark joy\' -- as well as choosing a dedicated place to store them. Going far beyond a typical tidying how-to, her method is a way of life and a state of mind.\nMarie captured the findings in her mega-best-selling books, including The Life-Changing Magic of Tidying Up: The Japanese Art of Decluttering and Organizing and its follow-up, Spark Joy: An Illustrated Master Class on the Art of Organizing and Tidying Up. Her books have sold more than seven million copies and have been published in more than forty countries.',
       length: '01:13:08',
       releaseDate: 'Sun, 16 Apr 2017 11:53:43 +0000',
       url: 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Marie_Kondo.mp3?dest-id=189939',
-      PodcastId: 1
+      PodcastId: 1,
+      feed:   {
+        'title': '#234: Marie Kondo -- The Japanese Tidying Master',
+        'published': '2017-04-16T11:53:43.000Z',
+        'guid': 'fddb935526c19f0f4c474ba39ed97668',
+        'image': 'http://static.libsyn.com/p/assets/5/0/4/a/504adafdd7fa3870/TimFerrissShowArt1400x1400.jpg',
+        'enclosure': {
+          'filesize': 52646976,
+          'type': 'audio/mpeg',
+          'url': 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Marie_Kondo.mp3?dest-id=189939'
+        },
+        'duration': '01:13:08',
+        'description': 'undefined'
+      }
     },
     {
       title: '#233: Cory Booker -- Street Fights, 10-Day Hunger Strikes, and Creative Problem-Solving',
@@ -212,7 +225,20 @@ var seedData = function () {
       length: '02:07:06',
       releaseDate: 'Mon, 10 Apr 2017 13:04:32 +0000',
       url: 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Cory_Booker.mp3?dest-id=189939',
-      PodcastId: 1
+      PodcastId: 1,
+      feed:   {
+        'title': '#233: Cory Booker -- Street Fights, 10-Day Hunger Strikes, and Creative Problem-Solving',
+        'published': '2017-04-10T13:04:32.000Z',
+        'guid': '7abd091f3ef2713642f7292796c5a48d',
+        'image': 'http://static.libsyn.com/p/assets/c/9/e/1/c9e19129c3a18ef6/TimFerrissShowArt-1400x1400.jpg',
+        'enclosure': {
+          'filesize': 91509696,
+          'type': 'audio/mpeg',
+          'url': 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Cory_Booker.mp3?dest-id=189939'
+        },
+        'duration': '02:07:06',
+        'description': 'undefined'
+      }
     },
     {
       title: '#232: The Tim Ferriss Radio Hour: Controlling Stress, Nutrition Upgrades, and Improved Health',
@@ -220,13 +246,26 @@ var seedData = function () {
       length: '01:15:50',
       releaseDate: 'Thu, 06 Apr 2017 13:59:38 +0000',
       url: 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Radio_Hour_episode_2.mp3?dest-id=189939',
-      PodcastId: 1
+      PodcastId: 1,
+      feed: {
+        'title': '#232: The Tim Ferriss Radio Hour: Controlling Stress, Nutrition Upgrades, and Improved Health',
+        'published': '2017-04-06T13:59:38.000Z',
+        'guid': '52a864d037d88215a8333ef2489bdc63',
+        'image': 'http://static.libsyn.com/p/assets/4/d/b/2/4db2729e748bdaae/TimFerrissShowArt-1400x1400.jpg',
+        'enclosure': {
+          'filesize': 36395661,
+          'type': 'audio/mpeg',
+          'url': 'http://traffic.libsyn.com/timferriss/The_Tim_Ferriss_Show_-_Radio_Hour_episode_2.mp3?dest-id=189939'
+        },
+        'duration': '01:15:50',
+        'description': 'undefined'
+      }
     }
   ]))
   .then(() => console.log(chalk.magenta('Seeding UserEpisodes')))
   .then(() => UserEpisode.bulkCreate([
     {
-      UserId: 1,
+      UserId: 4,
       EpisodeId: 1,
       bookmarked: null,
       liked: null,
@@ -235,7 +274,7 @@ var seedData = function () {
       lastPlayed: null
     },
     {
-      UserId: 1,
+      UserId: 4,
       EpisodeId: 2,
       bookmarked: null,
       liked: null,
@@ -244,7 +283,7 @@ var seedData = function () {
       lastPlayed: null
     },
     {
-      UserId: 1,
+      UserId: 4,
       EpisodeId: 3,
       bookmarked: null,
       liked: null,
@@ -252,6 +291,15 @@ var seedData = function () {
       currentTime: null,
       lastPlayed: null
     },
+    {
+      UserId: 2,
+      EpisodeId: 1,
+      bookmarked: null,
+      liked: null,
+      isInInbox: true,
+      currentTime: null,
+      lastPlayed: null
+    }
   ]))
   .then(() => console.log(chalk.magenta('Seeding PlaylistEpisodes')))
   .then(() => PlaylistEpisode.bulkCreate([
@@ -265,6 +313,10 @@ var seedData = function () {
     {PlaylistId: 6, EpisodeId: 3},
     {PlaylistId: 7, EpisodeId: 2}, // fri
     {PlaylistId: 8, EpisodeId: 2}, // weekend 2, 3
-    {PlaylistId: 8, EpisodeId: 3}
+    {PlaylistId: 8, EpisodeId: 3},
+    {PlaylistId: 1, EpisodeId: 1},
+    {PlaylistId: 9, EpisodeId: 1},
+    {PlaylistId: 10, EpisodeId: 1},
+    {PlaylistId: 10, EpisodeId: 2}
   ]));
 };

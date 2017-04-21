@@ -2,7 +2,7 @@ const chalk         = require('chalk');
 const config        = require('../config/config');
 const sequelize     = require('../config/db');
 const helpers       = require('../middleware/helpers.js');
-const parsePodcast  = require('node-podcast-parser');
+const parsePodcast  = require('../middleware/node-podcast-parser');
 const request       = require('request');
 const Promise       = require('bluebird');
 

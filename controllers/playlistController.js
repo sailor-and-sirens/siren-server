@@ -46,6 +46,23 @@ module.exports = {
     });
   },
 
+  getPlaylists: function (req, res) {
+    db.Playlist.findAll({
+      where: {UserId: req.user.id},
+      include: [
+        {model: db.Episode}
+      ]
+    })
+    .then(function (playlists) {
+      console.log('playlists?', playlists);
+      res.status(200).send(playlists);
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error fetching playlist: ' + err});
+      console.error(err);
+    });
+  },
+
   addEpisodeToPlaylist: function (req, res) {
     db.PlaylistEpisode.findOrCreate({
       where: {PlaylistId: req.body.playlistId, EpisodeId: req.body.episodeId}
@@ -68,6 +85,50 @@ module.exports = {
     })
     .catch(function (err) {
       res.status(400).send({ message: 'Error removing episode from playlist: ' + err});
+      console.error(err);
+    });
+  },
+
+  getEpisodesFromPlaylist: function (req, res) {
+    db.PlaylistEpisode.findAll({
+      where: {PlaylistId: req.body.playlistId}
+    })
+    .then(function (playlist) {
+      res.status(200).json(playlist);
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error fetching playlist: ' + err});
+      console.error(err);
+    });
+  },
+
+  updatePlaylistTitle: function (req, res) {
+    console.log('hit create playlist', req.body);
+    db.Playlist.find({
+      where: {PlaylistId: req.body.playlistId}
+    })
+    .then(function (foundPlaylist) {
+      foundPlaylist.update({
+        name: req.body.name
+      }).then(function (updatedPlaylist) {
+        res.status(201).json(updatedPlaylist);
+      });
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error updating playlist title: ' + err});
+      console.error(err);
+    });
+  },
+
+  removePlaylist: function (req, res) {
+    db.Playlist.destroy({
+      where: {PlaylistId: req.body.playlistId}
+    })
+    .then(function () {
+      res.status(204).send({ messaged: 'Playlist successfully removed'});
+    })
+    .catch(function (err) {
+      res.status(400).send({ message: 'Error removing playlist: ' + err});
       console.error(err);
     });
   }
