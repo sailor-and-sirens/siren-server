@@ -28,6 +28,7 @@ app.use(function (req, res, next) {
       console.log('TOKEN: ', token);
       var userObj = jwt.decode(token, secret.secret);
       req.user = userObj;
+      console.log('USER: ', userObj.id);
       return next();
     }
   }
