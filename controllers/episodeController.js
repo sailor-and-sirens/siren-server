@@ -9,7 +9,7 @@ var episodeID = 1;
 module.exports = {
   updateUserEpisode: function (req, res) {
     sequelize.UserEpisode.find({
-      where: {UserId: 1, EpisodeId: req.body.episodeId} // TODO update with req.user.id
+      where: {UserId: req.user.id, EpisodeId: req.body.episodeId}
     }).then(function (foundUserEpisode) {
       foundUserEpisode.update({
         currentTime: req.body.currentTime,

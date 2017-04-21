@@ -2,6 +2,7 @@ const chalk = require('chalk');
 const sanitize = require('sanitize-html');
 const request = require('request');
 const Promise = require('bluebird');
+const parsePodcast  = require('../middleware/node-podcast-parser');
 
 var secondstotime = (secs) => {
   var t = new Date(1970,0,1);
