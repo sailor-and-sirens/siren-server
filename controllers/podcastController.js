@@ -63,7 +63,7 @@ module.exports = {
             if (config.debug) {
               console.log(chalk.blue('Line 67 | Data: ', JSON.stringify(data, null, 2)));
             }
-            var user = req.user || helpers.mockUser();
+            var user = req.user;
             // Remove hardcoded user - for current testing
             sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
           });
