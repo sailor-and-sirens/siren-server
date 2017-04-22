@@ -69,11 +69,27 @@ module.exports = {
   },
 
   addEpisodeToPlaylist: function (req, res) {
-    db.PlaylistEpisode.findOrCreate({
-      where: {PlaylistId: req.body.playlistId, EpisodeId: req.body.episodeId}
+    db.Playlist.find({
+      where: {
+        name: {
+          $notIn: ['Listening To', 'Bookmarks']
+        },
+        UserId: 4
+      },
+      include: {model: db.Episode, where: {id: 1}}
     })
-    .then(function (playlistEpisode) {
-      res.status(201).json(playlistEpisode);
+    .then(function (playlist) {
+      db.PlaylistEpisode.findOrCreate({
+        where: {PlaylistId: req.body.playlistId, EpisodeId: req.body.episodeId}
+      })
+      .then(function (playlistEpisode) {
+        if (playlist && playlist.id !== req.body.playlistId) {
+          db.PlaylistEpisode.destroy({
+            where: {PlaylistId: playlist.id, EpisodeId: req.body.episodeId}
+          });
+        }
+        res.status(201).json(playlistEpisode);
+      });
     })
     .catch(function (err) {
       res.status(400).send({ message: 'Error adding episode to playlist: ' + err});
