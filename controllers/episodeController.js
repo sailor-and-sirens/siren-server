@@ -150,21 +150,21 @@ module.exports = {
 
   removeEpisodeFromInbox: function (req, res) {
     sequelize.Playlist.findAll({
-      where: { UserId: 4 },
+      where: { UserId: req.user.id },
       include: { model: sequelize.Episode, where: {id: req.body.episodeId} }
     })
     .then(function (foundPlaylist) {
       if (foundPlaylist.length > 0) {
         sequelize.UserEpisode.update(
           { isInInbox: false },
-          { where: { UserId: 4, EpisodeId: req.body.episodeId}}
+          { where: { UserId: req.user.id, EpisodeId: req.body.episodeId}}
         )
         .then(function () {
           res.status(200).send({ message: 'Episode removed from inbox' });
         });
       } else {
         sequelize.UserEpisode.destroy({
-          where: {UserId: 4, EpisodeId: req.body.episodeId}
+          where: {UserId: req.user.id, EpisodeId: req.body.episodeId}
         })
         .then(function () {
           res.status(200).send({ message: 'Episode removed' });
