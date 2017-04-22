@@ -27,6 +27,18 @@ module.exports = {
     });
   },
 
+  getSubscriptions: function (req, res) {
+    var user = req.user || helpers.mockUser();
+    sequelize.db.query('SELECT "Podcasts"."id", "Podcasts"."artistName", "Podcasts"."name", "Podcasts"."primaryGenreName", "Podcasts"."artworkUrl" FROM "Podcasts", "UserPodcasts" WHERE "Podcasts"."id" = "UserPodcasts"."PodcastId" AND "UserPodcasts"."UserId" = ' + user.id)
+      .then(function (data) {
+        if (data) {
+          res.status(201).send(data);
+        } else {
+          res.status(500).send('User ' + req.user.username + ' has no podcast subscriptions.');
+        }
+      });
+  },
+
   subscribe: function (req, res) {
     var user = req.user || helpers.mockUser();
     console.log(chalk.white('User: ', JSON.stringify(user)));
@@ -63,9 +75,10 @@ module.exports = {
             if (config.debug) {
               console.log(chalk.blue('Line 67 | Data: ', JSON.stringify(data, null, 2)));
             }
-            var user = req.user;
-            // Remove hardcoded user - for current testing
-            sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+            var user = req.user || helpers.mockUser();
+            if (user) {
+              sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+            }
           });
       } else {
         podcastID = data.id;
@@ -91,7 +104,9 @@ module.exports = {
             .then(function (data) {
               // Then add the association to UserPodcasts
               var user = req.user || helpers.mockUser();
-              sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+              if (user) {
+                sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
+              }
             });
           }
         });
@@ -130,10 +145,17 @@ module.exports = {
     })
     .then(function () {
       var user = req.user || helpers.mockUser();
-      sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") SELECT ' + user.id + ' as "UserId", id as "EpisodeId", true as "isInInbox", CURRENT_TIMESTAMP as "createdAt", CURRENT_TIMESTAMP as "updatedAt" FROM "Episodes" WHERE "PodcastId" = ' + podcastID + ' ORDER BY "releaseDate" DESC LIMIT 10');
-    })
-    .then(function (data) {
-      res.status(201).send(data);
+      if (user) {
+        sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") SELECT ' + user.id + ' as "UserId", id as "EpisodeId", true as "isInInbox", CURRENT_TIMESTAMP as "createdAt", CURRENT_TIMESTAMP as "updatedAt" FROM "Episodes" WHERE "PodcastId" = ' + podcastID + ' ORDER BY "releaseDate" DESC LIMIT 10')
+          .then(function (data) {
+            if (data) {
+              res.status(201).send('Subscribed ' + user.username + ' to podcast ' + req.body.collectionName + ' with ID ' + podcastID);
+            } else {
+              res.status(500).send('Error subscribing user to Podcast: ' + req.body.collectionName);
+            }
+          });
+      }
     });
+
   }
 };
