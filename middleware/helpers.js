@@ -55,7 +55,9 @@ var asyncGetFeed = (feedUrl) => {
       parsePodcast(data, (err, data) => {
         if (err) {
           console.error(chalk.red('Parsing error', err));
-          return;
+          // should this be reject(err); instead of return? -M
+          reject(err);
+          // return;
         }
         data = feedSanitizer(data.episodes);
         //console.log(chalk.white(JSON.stringify(data, null, 2)));
