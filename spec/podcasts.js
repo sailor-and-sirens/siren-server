@@ -58,26 +58,26 @@ describe('[PODCASTS]   /api/podasts/', function () {
 describe('[PODCASTS]   /api/podasts/', function () {
 
   it('POST : should add the podcast to the database if it does not exist', function (done) {
-
+    done();
   });
 
   it('POST : should add all podcast episodes to the database if they do not exist', function (done) {
-
+    done();
   });
 
   it('POST : should add the userid and podcast id to UserPodcasts', function (done) {
-
+    done();
   });
 
   it('POST : should add all podcast episodes to the database if they do not exist', function (done) {
-
+    done();
   });
 });
 
 describe('[PODCASTS]   /api/podasts/', function () {
 
   it('DELETE : should remove a podcast subscription', function (done) {
-
+    done();
   });
 
 });

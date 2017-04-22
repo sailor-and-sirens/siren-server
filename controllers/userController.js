@@ -12,7 +12,7 @@ module.exports = {
     .then (function (hash) { return hash; })
     .then((hash) => {
       req.body.password = hash;
-      return sequelize.User.findOne({where: {username: req.body.username}})
+      return sequelize.User.findOne({where: {username: req.body.username}});
     })
       .then(function (user) {
         if (user) {
@@ -81,8 +81,8 @@ module.exports = {
 
 
   bookmarkEpisode: function (req, res) {
-    var userEpRecord = null;
-    console.log('BookmarkEpisode ran!', req.body, " USER:", req.user.id);
+    //var userEpRecord = null;
+    console.log('BookmarkEpisode ran!', req.body, ' USER:', req.user.id);
     sequelize.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
       .then((record) => {
         if (record) {
@@ -95,14 +95,14 @@ module.exports = {
           .then(() => {
             sequelize.Playlist.find({where: {UserId: req.user.id, name: 'Bookmarks'}})
             .then((record) => {
-              console.log('Playlist record: ', record, 'req.body.id', req.body.id)
+              console.log('Playlist record: ', record, 'req.body.id', req.body.id);
               if (req.body.bookmark) {
                 sequelize.PlaylistEpisode.create({PlaylistId: record.id, EpisodeId: req.body.id});
               } else {
                 sequelize.PlaylistEpisode.destroy({PlaylistId: record.id, EpisodeId: req.body.id});
               }
-            })
-          })
+            });
+          });
         } else {
           res.status(400).send({message: 'User not found'});
           return;
