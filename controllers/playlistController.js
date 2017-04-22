@@ -12,19 +12,24 @@ module.exports = {
         UserId: req.user.id
       },
       attributes: ['id', 'name', 'createdAt'],
-      include: { model: db.Episode, attributes: ['length'] }
+      include: { model: db.Episode, attributes: ['id', 'length'] }
     })
     .then(function (playlists) {
       var playlistsWithDuration = playlists.map(playlist => {
         var data = playlist.dataValues;
+        var episodeIds = data.Episodes.map(function (episode) {
+          return episode.dataValues.id;
+        });
         return {
           id: data.id,
           name: data.name,
           createdAt: data.createdAt,
           totalEpisodes: data.Episodes.length,
-          totalTime: getTotalDuration(data.Episodes)
+          totalTime: getTotalDuration(data.Episodes),
+          episodeIds: episodeIds
         };
       });
+      console.log(playlistsWithDuration);
       res.status(200).json(playlistsWithDuration);
     })
     .catch(function (err) {
@@ -73,11 +78,27 @@ module.exports = {
   },
 
   addEpisodeToPlaylist: function (req, res) {
-    db.PlaylistEpisode.findOrCreate({
-      where: {PlaylistId: req.body.playlistId, EpisodeId: req.body.episodeId}
+    db.Playlist.find({
+      where: {
+        name: {
+          $notIn: ['Listening To', 'Bookmarks']
+        },
+        UserId: 4
+      },
+      include: {model: db.Episode, where: {id: 1}}
     })
-    .then(function (playlistEpisode) {
-      res.status(201).json(playlistEpisode);
+    .then(function (playlist) {
+      db.PlaylistEpisode.findOrCreate({
+        where: {PlaylistId: req.body.playlistId, EpisodeId: req.body.episodeId}
+      })
+      .then(function (playlistEpisode) {
+        if (playlist && playlist.id !== req.body.playlistId) {
+          db.PlaylistEpisode.destroy({
+            where: {PlaylistId: playlist.id, EpisodeId: req.body.episodeId}
+          });
+        }
+        res.status(201).json(playlistEpisode);
+      });
     })
     .catch(function (err) {
       res.status(400).send({ message: 'Error adding episode to playlist: ' + err});
