@@ -184,18 +184,18 @@ var seedData = function () {
   .then(() => console.log(chalk.magenta('Seeding Playlists')))
   .then(() => Playlist.create({ name: 'Bookmarks', UserId: 1, createdAt: new Date(), updatedAt: new Date() }))  //4
   .then(() => Playlist.create({ name: 'Listening To', UserId: 1, createdAt: new Date(), updatedAt: new Date()}))
-  .then(() => Playlist.create({ name: 'Monday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
-  .then(() => Playlist.create({ name: 'Tuesday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
-  .then(() => Playlist.create({ name: 'Wednesday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
-  .then(() => Playlist.create({ name: 'Thursday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
-  .then(() => Playlist.create({ name: 'Friday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
-  .then(() => Playlist.create({ name: 'Weekend', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
   .then(() => Playlist.create({ name: 'Bookmarks', UserId: 2, createdAt: new Date(), updatedAt: new Date() }))  //1
   .then(() => Playlist.create({ name: 'Listening To', UserId: 2, createdAt: new Date(), updatedAt: new Date()}))
   .then(() => Playlist.create({ name: 'Bookmarks', UserId: 3, createdAt: new Date(), updatedAt: new Date() }))  //1
   .then(() => Playlist.create({ name: 'Listening To', UserId: 3, createdAt: new Date(), updatedAt: new Date()}))
   .then(() => Playlist.create({ name: 'Bookmarks', UserId: 4, createdAt: new Date(), updatedAt: new Date() }))  //1
   .then(() => Playlist.create({ name: 'Listening To', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Monday', UserId: 4, createdAt: new Date(), updatedAt: new Date()})) // 9
+  .then(() => Playlist.create({ name: 'Tuesday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Wednesday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Thursday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Friday', UserId: 4, createdAt: new Date(), updatedAt: new Date()}))
+  .then(() => Playlist.create({ name: 'Weekend', UserId: 4, createdAt: new Date(), updatedAt: new Date()})) // 14
   .then(() => console.log(chalk.magenta('Seeding Episodes')))
   .then(() => Episode.bulkCreate([
     {
@@ -303,20 +303,13 @@ var seedData = function () {
   ]))
   .then(() => console.log(chalk.magenta('Seeding PlaylistEpisodes')))
   .then(() => PlaylistEpisode.bulkCreate([
-    {PlaylistId: 3, EpisodeId: 1}, // mon 1, 2, 3
-    {PlaylistId: 3, EpisodeId: 2},
-    {PlaylistId: 3, EpisodeId: 3},
-    {PlaylistId: 4, EpisodeId: 1}, // tues 1, 2
-    {PlaylistId: 4, EpisodeId: 2},
-    {PlaylistId: 5, EpisodeId: 1}, // wed 1
-    {PlaylistId: 6, EpisodeId: 1}, // thurs 1, 3
-    {PlaylistId: 6, EpisodeId: 3},
-    {PlaylistId: 7, EpisodeId: 2}, // fri
-    {PlaylistId: 8, EpisodeId: 2}, // weekend 2, 3
-    {PlaylistId: 8, EpisodeId: 3},
-    {PlaylistId: 1, EpisodeId: 1},
-    {PlaylistId: 9, EpisodeId: 1},
-    {PlaylistId: 10, EpisodeId: 1},
-    {PlaylistId: 10, EpisodeId: 2}
+    {PlaylistId: 9, EpisodeId: 1}, // em
+    {PlaylistId: 10, EpisodeId: 2}, // em
+    {PlaylistId: 11, EpisodeId: 3}, // em
+    // {PlaylistId: 8, EpisodeId: 3},
+    // {PlaylistId: 1, EpisodeId: 1},
+    // {PlaylistId: 9, EpisodeId: 1},
+    // {PlaylistId: 10, EpisodeId: 1},
+    // {PlaylistId: 10, EpisodeId: 2}
   ]));
 };
