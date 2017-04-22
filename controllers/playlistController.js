@@ -59,8 +59,17 @@ module.exports = {
       ]
     })
     .then(function (playlists) {
-      console.log('playlists?', playlists);
-      res.status(200).send(playlists);
+      var allPlaylists = playlists.map(playlist => {
+        var data = playlist.dataValues;
+        return {
+          id: data.id,
+          name: data.name,
+          createdAt: data.createdAt,
+          Episodes: data.Episodes,
+          totalTime: getTotalDuration(data.Episodes)
+        };
+      });
+      res.status(200).json(allPlaylists);
     })
     .catch(function (err) {
       res.status(400).send({ message: 'Error fetching playlist: ' + err});
@@ -179,7 +188,7 @@ module.exports = {
 
   removePlaylist: function (req, res) {
     db.Playlist.destroy({
-      where: {PlaylistId: req.body.playlistId}
+      where: {id: req.body.playlistId}
     })
     .then(function () {
       res.status(204).send({ messaged: 'Playlist successfully removed'});

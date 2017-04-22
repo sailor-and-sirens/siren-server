@@ -12,15 +12,15 @@ module.exports = {
     .then (function (hash) { return hash; })
     .then((hash) => {
       req.body.password = hash;
-      sequelize.User.find({where: {username: req.body.username}});
+      return sequelize.User.findOne({where: {username: req.body.username}});
     })
       .then(function (user) {
         if (user) {
           res.status(409).send({message: 'User already exists'});
+          return;
         } else {
           sequelize.User.create(req.body)
           .then(function (data) {
-            console.log(data);
             var userId = data.dataValues.id;
             var tokenData = jwt.sign(_.omit(data, 'password'), config.secret);
             console.log('token: ', tokenData);
@@ -43,6 +43,7 @@ module.exports = {
     .then(function (data) {
       if (!data) {
         res.status(400).send({message: 'Incorrect username and/or password'});
+        return;
       } else {
         bcrypt.compare(req.body.password, data.password, function (err, response) {
           if(err || !response) {
@@ -80,7 +81,8 @@ module.exports = {
 
 
   bookmarkEpisode: function (req, res) {
-    console.log('BookmarkEpisode ran!', req.body);
+    //var userEpRecord = null;
+    console.log('BookmarkEpisode ran!', req.body, ' USER:', req.user.id);
     sequelize.UserEpisode.find({where: {UserId: req.user.id, EpisodeId: req.body.id}})
       .then((record) => {
         if (record) {
@@ -89,16 +91,22 @@ module.exports = {
           })
           .then(function () {
             res.send(201);
+          })
+          .then(() => {
+            sequelize.Playlist.find({where: {UserId: req.user.id, name: 'Bookmarks'}})
+            .then((record) => {
+              console.log('Playlist record: ', record, 'req.body.id', req.body.id);
+              if (req.body.bookmark) {
+                sequelize.PlaylistEpisode.create({PlaylistId: record.id, EpisodeId: req.body.id});
+              } else {
+                sequelize.PlaylistEpisode.destroy({PlaylistId: record.id, EpisodeId: req.body.id});
+              }
+            });
           });
         } else {
           res.status(400).send({message: 'User not found'});
+          return;
         }
-        // console.log('playlist record: ', record, 'record.id: ', record.id);
-        // if (req.body.bookmark) {
-        //   sequelize.PlaylistEpisode.create({playlistId: record.id, episodeId: req.body.id});
-        // } else {
-        //   sequelize.PlaylistEpisode.destroy({playlistId: record.id, episodeId: req.body.id});
-        // }
       });
   },
 
