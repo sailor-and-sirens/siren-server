@@ -8,54 +8,55 @@ const Promise       = require('bluebird');
 const moment        = require('moment');
 const subscribe     = require('../controllers/episodeController.js').subscribe;
 
-
 module.exports = {
 
   getNewEpisodes: (req, res) => {
     sequelize.Podcast.findAll()
-    .then((podcasts) => {
-      var newEpisodes = [];
-      podcasts.forEach((podcast) => {
-        let lastTitle = '';
-        let lastDate = '';
+    .then( (podcasts) => {
+      podcasts.forEach( (podcast) => {
+        console.log('Getting new episodes of ', podcast.name);
+        let newEpisodes = [];
+        let lastTitle = null;
+        let lastDate = null;
         let feedUrl = podcast.feedUrl;
         sequelize.Episode.max('id', {where:{PodcastId: podcast.id}})
-        .then((id) => {
+        .then( (id) => {
           if (id) {
-            sequelize.Episode.findOne({where:{id: id}})
-            .then((episode) => {
-              lastTitle = episode.title;
-              lastDate = moment(episode.releaseDate).format('l');
-            })
-            .then(() => {
+            return sequelize.Episode.findOne({where:{id: id}})
+            .then( (lastEpisode) => {
+
+              lastTitle = lastEpisode.title;
+              lastDate = parseInt(moment(lastEpisode.releaseDate).format('YYMMDD'));
+
               return helpers.getFeed(feedUrl);
-            })
-            .then((feed) => {
-              feed = feed.data;
-              feed.forEach((episode) => {
-                var published = moment(episode.published).format('l');
-                if(episode.title !== lastTitle && (moment(lastDate).isBefore(published) || lastDate === published)) {
-                  newEpisodes.push(episode);
-                }
+            });
+          } else {
+            return helpers.getFeed(feedUrl);
+          }
+        })
+        .then( (feed) => {
+          feed = feed.data;
+          feed.forEach( (episode) => {
+            let published = parseInt(moment(episode.published).format('YYMMDD'));
+            if (episode.title !== lastTitle && lastDate <= published) {
+              newEpisodes.push(episode);
+            }
+          })
+          return sequelize.UserPodcast.findAll({where: {PodcastId: podcast.id}});
+        })
+        .then( (records) => {
+          if (records) {
+            records.forEach( (record) => {
+              newEpisodes.forEach( (newEpisode) => {
+                subscribe({user: {id: record.dataValues.UserId, username: 'another user'}, body: {helper: true, episode: newEpisode, podcast: podcast.dataValues}});
               })
             })
-            .then(() => {
-              return sequelize.UserPodcast.findAll({where: {PodcastId: podcast.id}})
-            })
-            .then((records) => {
-              if (records) {
-                records.forEach((record) => {
-                  newEpisodes.forEach((newEpisode) => {
-                    var subscribed = subscribe({user: {id: record.dataValues.UserId, username: 'another user'}, body: {helper: true, episode: newEpisode, podcast: podcast.dataValues}});
-                    console.log(subscribed);
-                  })
-                })
-              } else {console.log('No subscribed users found.');}
-            })
-            .catch(console.log)
+          } else {
+            console.log('No subscribed users found.');
           }
         })
       })
     })
   }
+
 }

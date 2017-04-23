@@ -21,6 +21,8 @@ module.exports = {
           return;
         }
         var episodes = helpers.feedSanitizer(podcast.episodes);
+        delete podcast.episodes;
+        episodes[0].podcast = podcast;
         console.log(chalk.yellow(req.user));
         res.status(200).send(episodes);
       });
@@ -130,7 +132,7 @@ module.exports = {
         if(episode) {
           sequelize.Episode.create({
             title: episode.title,
-            description: episode.subtitle,
+            description: episode.description,
             length: episode.duration,
             releaseDate: episode.pubDate,
             url: episode.enclosure.url,

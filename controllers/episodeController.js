@@ -135,10 +135,12 @@ module.exports = {
             if (user) {
               sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") VALUES (' + user.id + ', ' + episodeID + ', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);')
                 .then(function (data) {
-                  if (data) {
-                    res.status(201).send(data);
-                  } else {
-                    res.status(500).send('Error subscribing user to Episode: ' + req.body.episode.title);
+                  if (!req.body.helper) {
+                    if (data) {
+                      res.status(201).send(data);
+                    } else {
+                      res.status(500).send('Error subscribing user to Episode: ' + req.body.episode.title);
+                    }
                   }
                 });
             }
