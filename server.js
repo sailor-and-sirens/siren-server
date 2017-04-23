@@ -17,9 +17,9 @@ app.use(bodyParser.json());
 
 // AUTHENTICATION MIDDLEWEAR: comment out if testing without token in auth header
 app.use(function (req, res, next) {
-  if(req.url.includes('/inbox')){
-    getNewEpisodes();
-  }
+//   if(req.url.includes('/inbox')){
+//     getNewEpisodes();
+//   }
   if(req.url.includes('/logout')) {
     delete req.user;
   }
