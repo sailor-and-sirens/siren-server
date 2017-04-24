@@ -116,7 +116,7 @@ module.exports = {
     if (config.log) {
       console.log(chalk.blue('Getting Inbox for ' + user.username + '...'));
     }
-    var query = 'SELECT * FROM "Inbox" WHERE "username" = ' +  String('\'') + user.username + String('\'');
+    var query = 'SELECT * FROM "Inbox" WHERE "username" = ' +  String('\'') + user.username + String('\'') + ' ORDER BY "releaseDate" DESC';
 
     sequelize.db.query(query)
     .then(function (data) {
