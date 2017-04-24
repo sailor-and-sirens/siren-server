@@ -10,7 +10,7 @@ const playlistRouter = require('./routers/playlists');
 const secret = require('./config/secret.json');
 const jwt = require('jsonwebtoken');
 const app = express();
-const getNewEpisodes = require('./middleware/getNewEpisodes.js').getNewEpisodes;
+//const getNewEpisodes = require('./middleware/getNewEpisodes.js').getNewEpisodes;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
