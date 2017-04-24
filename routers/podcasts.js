@@ -7,6 +7,7 @@ const updater = require('../middleware/getNewEpisodes.js');
 podcastRouter.get('/feeds', podcastController.getFeed);
 podcastRouter.get('/', podcastController.getSubscriptions);
 podcastRouter.post('/', podcastController.subscribe);
-podcastRouter.get('/newEpisodes', updater.getNewEpisodes)
+podcastRouter.get('/newEpisodes', updater.getNewEpisodes);
+podcastRouter.delete('/:id', podcastController.deleteSubscription);
 
 module.exports = podcastRouter;
