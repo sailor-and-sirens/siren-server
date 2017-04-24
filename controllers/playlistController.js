@@ -64,7 +64,7 @@ module.exports = {
           include: [{model: db.Podcast}, {model: db.User, where: {id: req.user.id}, required: false}]
         }
       ]
-    })//TO DO: list required items in episodecard -- image, feed, tag, bookmark, like // match data below
+    })
     .then(function (playlists) {
       var allPlaylists = playlists.map(playlist => {
         var data = playlist.dataValues;
