@@ -189,6 +189,57 @@ module.exports = {
           res.status(500).send('Error deleting user episode with ID: ' + req.body.EpisodeId);
         }
       });
-  }
+  },
 
+  getCurrentlyPlayingEpisode: function (req, res) {
+    sequelize.UserEpisode.findAll({
+      limit: 1,
+      where: {
+        UserId: 5,
+        lastPlayed: {
+          $not: null
+        },
+        currentTime: {
+          $not: null
+        }
+      },
+      order: [['lastPlayed', 'DESC']]
+    })
+    .then(function (userEpisode) {
+      if (userEpisode.length > 0) {
+        sequelize.Episode.findOne({
+          where: { id: userEpisode[0].EpisodeId },
+          include: { model: sequelize.Podcast }
+        })
+        .then(function (episode) {
+          let episodeData = {
+            EpisodeId: episode.id,
+            PodcastId: episode.Podcast.id,
+            UserId: req.user.id,
+            avatarUrl: req.user.avatarUrl,
+            bookmark: userEpisode[0].bookmarked,
+            creator: episode.Podcast.artistName,
+            currentTime: userEpisode[0].currentTime,
+            description: episode.description,
+            email: req.user.email,
+            episodeTitle: episode.title,
+            feed: episode.feed,
+            feedUrl: episode.Podcast.feedUrl,
+            image: episode.Podcast.artworkUrl,
+            image600: episode.Podcast.artworkUrl600,
+            length: episode.length,
+            liked: userEpisode[0].liked,
+            releaseDate: episode.releaseDate,
+            tag: episode.Podcast.primaryGenreName,
+            title: episode.Podcast.name,
+            url: episode.url,
+            username: req.user.username
+          };
+          res.status(200).json(episodeData);
+        });
+      } else {
+        res.status(200).json(null);
+      }
+    });
+  }
 };
