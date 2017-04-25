@@ -10,16 +10,16 @@ const playlistRouter = require('./routers/playlists');
 const secret = require('./config/secret.json');
 const jwt = require('jsonwebtoken');
 const app = express();
-//const getNewEpisodes = require('./middleware/getNewEpisodes.js').getNewEpisodes;
+const getNewEpisodes = require('./middleware/getNewEpisodes.js').getNewEpisodes;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+//Get new episodes every 1/2 hour
+setInterval(getNewEpisodes, 1800000);
+
 // AUTHENTICATION MIDDLEWEAR: comment out if testing without token in auth header
 app.use(function (req, res, next) {
-//   if(req.url.includes('/inbox')){
-//     getNewEpisodes();
-//   }
   if(req.url.includes('/logout')) {
     delete req.user;
   }
