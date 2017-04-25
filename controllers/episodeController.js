@@ -195,7 +195,7 @@ module.exports = {
     sequelize.UserEpisode.findAll({
       limit: 1,
       where: {
-        UserId: 5,
+        UserId: req.user.id,
         lastPlayed: {
           $not: null
         },
