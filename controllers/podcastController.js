@@ -21,6 +21,8 @@ module.exports = {
           return;
         }
         var episodes = helpers.feedSanitizer(podcast.episodes);
+        delete podcast.episodes;
+        episodes[0].podcast = podcast;
         console.log(chalk.yellow(req.user));
         res.status(200).send(episodes);
       });
@@ -45,6 +47,8 @@ module.exports = {
     if (config.log) {
       console.log(chalk.blue('Subscribing ' + user.username + ' to Podcast...'));
       console.log(chalk.white(req.body.collectionName));
+      console.log(chalk.blue('Data passed from client...'));
+      console.log(chalk.white(JSON.stringify(req.body, null, 2)));
     }
     var params = {
       artistId: req.body.artistId,
@@ -130,7 +134,7 @@ module.exports = {
         if(episode) {
           sequelize.Episode.create({
             title: episode.title,
-            description: episode.subtitle,
+            description: episode.description,
             length: episode.duration,
             releaseDate: episode.pubDate,
             url: episode.enclosure.url,
@@ -156,6 +160,19 @@ module.exports = {
           });
       }
     });
+  },
 
+  deleteSubscription: function (req, res) {
+    console.log(chalk.blue('Deleting Podcat Subscription:'));
+    console.log(chalk.white('Deleting Podcast ID ' + req.params.id + ' from User ' + req.user.username));
+    sequelize.db.query('DELETE FROM "UserEpisodes" WHERE "UserId" = ' + req.user.id + ' AND "EpisodeId" IN (SELECT "id" FROM "Episodes" WHERE "PodcastId" = ' + req.params.id + ');');
+    sequelize.db.query('DELETE FROM "UserPodcasts" WHERE "UserId" = ' + req.user.id + ' AND "PodcastId" = ' + req.params.id)
+      .then(function (data) {
+        if (data) {
+          res.status(201).send(data);
+        } else {
+          res.status(500).send('Error deleting user episode with ID: ' + req.body.EpisodeId);
+        }
+      });
   }
 };

@@ -2,8 +2,6 @@ const chalk         = require('chalk');
 const config        = require('../config/config');
 const sequelize     = require('../config/db');
 const helpers       = require('../middleware/helpers.js');
-var podcastID = 0;
-var episodeID = 0;
 
 module.exports = {
   updateUserEpisode: function (req, res) {
@@ -25,10 +23,13 @@ module.exports = {
   subscribe: function (req, res) {
     var user = req.user || helpers.mockUser();
     console.log(chalk.white('User: ', JSON.stringify(user)));
-    if (config.log) {
-      console.log(chalk.blue('Subscribing ' + user.username + ' to Episode...'));
-      console.log(chalk.white(req.body.episode.title));
-    }
+
+    var episode = req.body.episode;
+    episode.subtitle = episode.description;
+    episode.pubDate = episode.published;
+    delete episode.description;
+    delete episode.releaseDate;
+
     var params = {
       artistId: req.body.podcast.artistId,
       artistName: req.body.podcast.artistName,
@@ -39,6 +40,15 @@ module.exports = {
       name: req.body.podcast.collectionName,
       primaryGenreName: req.body.podcast.primaryGenreName,
     };
+
+    var podcastID;
+    var episodeID;
+
+    if (config.log) {
+      console.log(chalk.blue('Subscribing ' + user.username + ' to Episode...'));
+      console.log(chalk.white(req.body.episode.title));
+    }
+
     sequelize.Podcast.findOne({
       where: {
         feedUrl: params.feedUrl
@@ -67,11 +77,7 @@ module.exports = {
         console.log(chalk.blue('Line 61 | Episode Data Returned from Request: ', JSON.stringify(req.body.episode, null, 2)));
         console.log(chalk.blue('Line 65 | Podcast ID: ' + podcastID));
       }
-      var episode = req.body.episode;
-      episode.subtitle = episode.description;
-      episode.pubDate = episode.published;
-      delete episode.description;
-      delete episode.releaseDate;
+
 
       sequelize.Episode.findOne({
         where: {
@@ -81,18 +87,12 @@ module.exports = {
       })
       .then(function (data) {
         if(!data) {
-          var episode = req.body.episode;
-          episode.subtitle = episode.description;
-          episode.pubDate = episode.published;
-          delete episode.description;
-          delete episode.releaseDate;
-
           if (config.debug) {
             console.log(chalk.blue('Line 90 | Adding Episode: ' + JSON.stringify(episode)));
           }
           sequelize.Episode.create({
             title: episode.title,
-            description: episode.description,
+            description: episode.subtitle,
             length: episode.duration,
             releaseDate: episode.published,
             url: episode.enclosure.url,
@@ -135,10 +135,12 @@ module.exports = {
             if (user) {
               sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") VALUES (' + user.id + ', ' + episodeID + ', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);')
                 .then(function (data) {
-                  if (data) {
-                    res.status(201).send(data);
-                  } else {
-                    res.status(500).send('Error subscribing user to Episode: ' + req.body.episode.title);
+                  if (!req.body.helper) {
+                    if (data) {
+                      res.status(201).send(data);
+                    } else {
+                      res.status(500).send('Error subscribing user to Episode: ' + req.body.episode.title);
+                    }
                   }
                 });
             }
@@ -174,6 +176,19 @@ module.exports = {
     .catch(function (err) {
       res.status(400).send('Error removing episode: ' + err);
     });
+  },
+
+  deleteUserEpisode: function (req, res) {
+    console.log(chalk.blue('Deleting UserEpisode:'));
+    console.log(chalk.white('Deleting Episode ' + req.params.id + ' from User ' + req.user.username));
+    sequelize.db.query('DELETE FROM "UserEpisodes" WHERE "UserId" = ' + req.user.id + ' AND "EpisodeId" = ' + req.params.id)
+      .then(function (data) {
+        if (data) {
+          res.status(201).send(data);
+        } else {
+          res.status(500).send('Error deleting user episode with ID: ' + req.body.EpisodeId);
+        }
+      });
   },
 
   getCurrentlyPlayingEpisode: function (req, res) {

@@ -40,7 +40,9 @@ module.exports = {
 
   createPlaylist: function (req, res) {
     db.Playlist.findOrCreate({
-      where: {name: req.body.name, UserId: req.user.id}
+      where: {
+        name: req.body.name,
+        UserId: req.user.id}
     })
     .then(function (playlist) {
       res.status(201).json(playlist);
@@ -51,11 +53,16 @@ module.exports = {
     });
   },
 
-  getPlaylists: function (req, res) {
+  getPlaylistsForPlaylistView: function (req, res) {
     db.Playlist.findAll({
-      where: {UserId: req.user.id},
+      where: {
+        UserId: req.user.id
+      },
       include: [
-        {model: db.Episode}
+        {
+          model: db.Episode,
+          include: [{model: db.Podcast}, {model: db.User, where: {id: req.user.id}, required: false}]
+        }
       ]
     })
     .then(function (playlists) {
