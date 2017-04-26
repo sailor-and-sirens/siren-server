@@ -1,7 +1,8 @@
 const chalk         = require('chalk');
 const config        = require('../config/config');
 const sequelize     = require('../config/db');
-const helpers       = require('../middleware/helpers.js');
+const utils       = require('../middleware/helpers.js');
+const helpers       = require('../middleware/subscriptionHelpers.js');
 
 module.exports = {
   updateUserEpisode: function (req, res) {
@@ -21,7 +22,7 @@ module.exports = {
   },
 
   subscribe: function (req, res) {
-    var user = req.user || helpers.mockUser();
+    var user = req.user || utils.mockUser();
     console.log(chalk.white('User: ', JSON.stringify(user)));
 
     var episode = req.body.episode;
@@ -41,112 +42,43 @@ module.exports = {
       primaryGenreName: req.body.podcast.primaryGenreName,
     };
 
-    var podcastID;
-    var episodeID;
+    var podcast = null;
 
     if (config.log) {
       console.log(chalk.blue('Subscribing ' + user.username + ' to Episode...'));
       console.log(chalk.white(req.body.episode.title));
     }
 
-    sequelize.Podcast.findOne({
-      where: {
-        feedUrl: params.feedUrl
-      }
-    })
+    helpers.getPodcast(params)
     .then(function (data) {
-      if (config.debug) {
-        console.log(chalk.blue('Line 49 | Data Returned from Query for Existing Podcast Record: ', JSON.stringify(data, null, 2)));
-      }
-      // If the Podcast has not been written to the database:
       if (!data) {
-        // Create the Podcast record
-        sequelize.Podcast.create(params)
-        .then(function (data) {
-          console.log(chalk.blue('Line 56 | Podcast ID: ' + data.id));
-          podcastID = data.id;
-          return data;
-        });
+        return helpers.createPodcast(params);
       } else {
-        podcastID = data.id;
         return data;
       }
     })
-    .then(() => {
-      if (config.debug) {
-        console.log(chalk.blue('Line 61 | Episode Data Returned from Request: ', JSON.stringify(req.body.episode, null, 2)));
-        console.log(chalk.blue('Line 65 | Podcast ID: ' + podcastID));
+    .then(function (data) {
+      podcast = data;
+      console.log(chalk.yellow(podcast));
+      return utils.getFeed(req.body.podcast.feedUrl);
+    })
+    .then(function (data) {
+      helpers.addEpisodes(data, podcast);
+    })
+    .then(function () {
+      return helpers.getEpisode(podcast, episode);
+    })
+    .then(function (data) {
+      episode = data;
+      console.log(chalk.white(data));
+      return helpers.addUserEpisode(req.user, data);
+    })
+    .then(function (data) {
+      if (data) {
+        res.status(201).send('Subscribed ' + user.username + ' to episode ' + req.body.episode.title + ' with ID ' + data.id);
+      } else {
+        res.status(500).send('Error subscribing user to Episode: ' + req.body.episode.title);
       }
-
-
-      sequelize.Episode.findOne({
-        where: {
-          title: episode.title,
-          PodcastId: podcastID
-        }
-      })
-      .then(function (data) {
-        if(!data) {
-          if (config.debug) {
-            console.log(chalk.blue('Line 90 | Adding Episode: ' + JSON.stringify(episode)));
-          }
-          sequelize.Episode.create({
-            title: episode.title,
-            description: episode.subtitle,
-            length: episode.duration,
-            releaseDate: episode.published,
-            url: episode.enclosure.url,
-            PodcastId: podcastID,
-            feed: episode
-          })
-          .then(function (data) {
-            console.log(chalk.blue('Line 102 | Episode ID: ' + data.id));
-            episodeID = data.id;
-          })
-          .then(function () {
-            var user = req.user; // || helpers.mockUser();
-            if (user) {
-              sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") VALUES (' + user.id + ', ' + episodeID + ', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);')
-                .then(function (data) {
-                  if (data) {
-                    res.status(201).send(data);
-                  } else {
-                    res.status(500).send('Error subscribing user to Episode: ' + req.body.episode.title);
-                  }
-                  return;
-                });
-            }
-          });
-        } else {
-          console.log(chalk.blue('Line 119 | Episode ID: ' + data.id));
-          episodeID = data.id;
-        }
-      })
-      .then(function () {
-        sequelize.UserEpisode.findOne({
-          where: {
-            EpisodeId: episodeID,
-            UserId: user.id
-          }
-        })
-        .then(function (data) {
-          if (!data) {
-            var user = req.user || helpers.mockUser();
-            if (user) {
-              sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") VALUES (' + user.id + ', ' + episodeID + ', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);')
-                .then(function (data) {
-                  if (!req.body.helper) {
-                    if (data) {
-                      res.status(201).send(data);
-                    } else {
-                      res.status(500).send('Error subscribing user to Episode: ' + req.body.episode.title);
-                    }
-                  }
-                });
-            }
-          }
-        });
-      });
     });
   },
 

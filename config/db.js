@@ -23,7 +23,7 @@ var Podcast = db.define('Podcast', {
 });
 
 var Episode = db.define('Episode', {
-  title: Sequelize.STRING,
+  title: {type: Sequelize.STRING, unique: true},
   description: Sequelize.TEXT,
   length: Sequelize.STRING, // changed from time - em
   releaseDate: Sequelize.DATEONLY,

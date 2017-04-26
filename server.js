@@ -3,12 +3,11 @@ const config = require('./config/config');
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const middleware = require('./middleware');
 const podcastRouter = require('./routers/podcasts');
 const userRouter = require('./routers/users');
 const episodeRouter = require('./routers/episodes');
 const playlistRouter = require('./routers/playlists');
-const secret = require('./config/secret.json');
-const jwt = require('jsonwebtoken');
 const app = express();
 const getNewEpisodes = require('./middleware/getNewEpisodes.js').getNewEpisodes;
 
@@ -19,35 +18,10 @@ app.use(bodyParser.json());
 setInterval(getNewEpisodes, 1800000);
 
 // AUTHENTICATION MIDDLEWEAR: comment out if testing without token in auth header
-app.use(function (req, res, next) {
-  if(req.url.includes('/logout')) {
-    delete req.user;
-  }
-  if (!req.url.includes('/createUser') && !req.url.includes('/login')) {
-    var token = req.headers.authorization;
-    if (!token) {
-      res.status(500).send('No authorization header with request.');
-      return;
-    } else {
-      console.log('TOKEN: ', token);
-      var userObj = jwt.decode(token, secret.secret);
-      req.user = userObj;
-      console.log('USER: ', userObj.id);
-      return next();
-    }
-  }
-  return next();
-});
+app.use(middleware.auth);
 
 app.use(morgan('dev'));
-app.use(function (req, res, next) {
-  res.header('access-control-allow-origin', '*');
-  res.header('access-control-allow-methods', 'GET, POST, PUT, OPTIONS, DELETE');
-  res.header('access-control-allow-headers', 'content-type, accept');
-  res.header('access-control-max-age', 10);
-  res.header('x-xss-protection', 0);
-  next();
-});
+app.use(middleware.headers);
 
 app.use('/api/podcasts', podcastRouter);
 app.use('/api/users', userRouter);
