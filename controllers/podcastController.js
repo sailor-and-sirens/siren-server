@@ -1,12 +1,11 @@
 const chalk         = require('chalk');
 const config        = require('../config/config');
 const sequelize     = require('../config/db');
-const helpers       = require('../middleware/helpers.js');
+const utils       = require('../middleware/helpers.js');
+const helpers       = require('../middleware/subscriptionHelpers.js');
 const parsePodcast  = require('../middleware/node-podcast-parser');
 const request       = require('request');
-const Promise       = require('bluebird');
-
-var podcastID = 1;
+//const Promise       = require('bluebird');
 
 module.exports = {
   getFeed: function (req, res) {
@@ -20,7 +19,7 @@ module.exports = {
           console.error('Parsing error', err);
           return;
         }
-        var episodes = helpers.feedSanitizer(podcast.episodes);
+        var episodes = utils.feedSanitizer(podcast.episodes);
         delete podcast.episodes;
         episodes[0].podcast = podcast;
         console.log(chalk.yellow(req.user));
@@ -30,7 +29,7 @@ module.exports = {
   },
 
   getSubscriptions: function (req, res) {
-    var user = req.user || helpers.mockUser();
+    var user = req.user || utils.mockUser();
     sequelize.db.query('SELECT "Podcasts"."id", "Podcasts"."artistName", "Podcasts"."name", "Podcasts"."primaryGenreName", "Podcasts"."artworkUrl" FROM "Podcasts", "UserPodcasts" WHERE "Podcasts"."id" = "UserPodcasts"."PodcastId" AND "UserPodcasts"."UserId" = ' + user.id)
       .then(function (data) {
         if (data) {
@@ -42,14 +41,17 @@ module.exports = {
   },
 
   subscribe: function (req, res) {
-    var user = req.user || helpers.mockUser();
-    console.log(chalk.white('User: ', JSON.stringify(user)));
+    var user = req.user || utils.mockUser();
+    //console.log(chalk.white('User: ', JSON.stringify(user)));
     if (config.log) {
       console.log(chalk.blue('Subscribing ' + user.username + ' to Podcast...'));
       console.log(chalk.white(req.body.collectionName));
+    }
+    if (config.debug) {
       console.log(chalk.blue('Data passed from client...'));
       console.log(chalk.white(JSON.stringify(req.body, null, 2)));
     }
+
     var params = {
       artistId: req.body.artistId,
       artistName: req.body.artistName,
@@ -60,105 +62,35 @@ module.exports = {
       name: req.body.collectionName,
       primaryGenreName: req.body.primaryGenreName,
     };
-    sequelize.Podcast.findOne({
-      where: {
-        feedUrl: params.feedUrl
+    var podcast = null;
+
+    helpers.getPodcast(params)
+    .then(function (data) {
+      if (!data) {
+        return helpers.createPodcast(params);
+      } else {
+        return data;
       }
     })
     .then(function (data) {
-      if (config.debug) {
-        console.log(chalk.blue('Line 60 | Data: ', JSON.stringify(data, null, 2)));
-      }
-      // If the Podcast has not been written to the database:
-      if (!data) {
-        // Create the Podcast record
-        sequelize.Podcast.create(params)
-          .then(function (data) {
-            podcastID = data.id;
-            // Then Insert the Podcast into UserPodcasts
-            if (config.debug) {
-              console.log(chalk.blue('Line 67 | Data: ', JSON.stringify(data, null, 2)));
-            }
-            var user = req.user || helpers.mockUser();
-            if (user) {
-              sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
-            }
-          });
-      } else {
-        podcastID = data.id;
-        // If the Podcast has been written to the database
-        // Check to see if this is already in UserPodcasts
-        sequelize.UserPodcast.find({
-          where: {
-            PodcastId: data.id,
-            UserId: user.id
-          }
-        })
-        .then(function (data) {
-          if (config.debug) {
-            console.log(chalk.blue('Line 83 | Data: ', JSON.stringify(data, null, 2)));
-          }
-          if(!data) {
-            // If not, get a reference to the Podcast record
-            sequelize.Podcast.findOne({
-              where: {
-                feedUrl: params.feedUrl
-              }
-            })
-            .then(function (data) {
-              // Then add the association to UserPodcasts
-              var user = req.user || helpers.mockUser();
-              if (user) {
-                sequelize.db.query('INSERT INTO "UserPodcasts" ("UserId", "PodcastId", "createdAt", "updatedAt") VALUES(' + user.id + ', ' + data.id + ', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);');
-              }
-            });
-          }
-        });
-      }
-    })
-    .then(function () {
-      return helpers.getFeed(req.body.feedUrl);
-    })
-    .then((data) => {
-      console.log(chalk.blue('Line 108 | Data: ', JSON.stringify(data.data, null, 2)));
-      return Promise.each(data.data, (episode) => {
-        if (config.log) {
-          console.log(chalk.blue('Adding Podcast Episode...'));
-          console.log(chalk.white(episode.title));
-        }
-        episode.subtitle = episode.description;
-        episode.pubDate = episode.published;
-        delete episode.description;
-        delete episode.releaseDate;
-
-        if(episode) {
-          sequelize.Episode.create({
-            title: episode.title,
-            description: episode.description,
-            length: episode.duration,
-            releaseDate: episode.pubDate,
-            url: episode.enclosure.url,
-            PodcastId: podcastID,
-            feed: episode
-          });
-          return Promise.resolve();
+      podcast = data;
+      utils.getFeed(req.body.feedUrl)
+      .then(function (data) {
+        helpers.addEpisodes(data, podcast);
+      })
+      .then(function () {
+        helpers.createUserPodcast(req.user, podcast);
+      })
+      .then(function () {
+        return helpers.addPodcastEpisodes(podcast, req.user);
+      })
+      .then(function (data) {
+        if (data) {
+          res.status(201).send('Subscribed ' + user.username + ' to podcast ' + req.body.collectionName + ' with ID ' + podcast.id);
         } else {
-          return Promise.reject();
+          res.status(500).send('Error subscribing user to Podcast: ' + req.body.collectionName);
         }
       });
-    })
-    .then(function () {
-      var user = req.user || helpers.mockUser();
-      if (user) {
-        sequelize.db.query('INSERT INTO "UserEpisodes" ("UserId", "EpisodeId", "isInInbox", "createdAt", "updatedAt") SELECT ' + user.id + ' as "UserId", id as "EpisodeId", true as "isInInbox", CURRENT_TIMESTAMP as "createdAt", CURRENT_TIMESTAMP as "updatedAt" FROM "Episodes" WHERE "PodcastId" = ' + podcastID + ' ORDER BY "releaseDate" DESC LIMIT 10')
-          .then(function (data) {
-            if (data) {
-              res.status(201).send('Subscribed ' + user.username + ' to podcast ' + req.body.collectionName + ' with ID ' + podcastID);
-            } else {
-              res.status(500).send('Error subscribing user to Podcast: ' + req.body.collectionName);
-            }
-          });
-      }
     });
   },
 
