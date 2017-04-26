@@ -63,7 +63,7 @@ module.exports = {
       return utils.getFeed(req.body.podcast.feedUrl);
     })
     .then(function (data) {
-      helpers.addEpisodes(data, podcast);
+      return helpers.addEpisodes(data, podcast);
     })
     .then(function () {
       return helpers.getEpisode(podcast, episode);

@@ -56,12 +56,13 @@ var addEpisodes = (feed, podcast) => {
     delete episode.description;
     delete episode.releaseDate;
 
-    getEpisode(podcast, episode)
+    return getEpisode(podcast, episode)
     .then(function (data) {
       if (data) {
         return Promise.resolve();
       } else {
-        sequelize.Episode.create({
+        if (episode && episode.enclosure) {
+        return sequelize.Episode.create({
           title: episode.title,
           description: episode.description,
           length: episode.duration,
@@ -76,7 +77,12 @@ var addEpisodes = (feed, podcast) => {
           } else {
             return Promise.reject();
           }
+        })
+        .catch(function (err) {
+          //console.log(err);
+          return Promise.resolve();
         });
+        }
       }
     });
   });
