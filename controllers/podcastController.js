@@ -76,10 +76,10 @@ module.exports = {
       podcast = data;
       utils.getFeed(req.body.feedUrl)
       .then(function (data) {
-        helpers.addEpisodes(data, podcast);
+        return helpers.addEpisodes(data, podcast);
       })
       .then(function () {
-        helpers.createUserPodcast(req.user, podcast);
+        return helpers.createUserPodcast(req.user, podcast);
       })
       .then(function () {
         return helpers.addPodcastEpisodes(podcast, req.user);

@@ -56,27 +56,33 @@ var addEpisodes = (feed, podcast) => {
     delete episode.description;
     delete episode.releaseDate;
 
-    getEpisode(podcast, episode)
+    return getEpisode(podcast, episode)
     .then(function (data) {
       if (data) {
         return Promise.resolve();
       } else {
-        sequelize.Episode.create({
-          title: episode.title,
-          description: episode.description,
-          length: episode.duration,
-          releaseDate: episode.pubDate,
-          url: episode.enclosure.url,
-          PodcastId: podcast.id,
-          feed: episode
-        })
-        .then(function (data) {
-          if (data) {
+        if (episode && episode.enclosure) {
+          return sequelize.Episode.create({
+            title: episode.title,
+            description: episode.description,
+            length: episode.duration,
+            releaseDate: episode.pubDate,
+            url: episode.enclosure.url,
+            PodcastId: podcast.id,
+            feed: episode
+          })
+          .then(function (data) {
+            if (data) {
+              return Promise.resolve();
+            } else {
+              return Promise.reject();
+            }
+          })
+          .catch(function (/* err */) {
+            //console.log(err);
             return Promise.resolve();
-          } else {
-            return Promise.reject();
-          }
-        });
+          });
+        }
       }
     });
   });
