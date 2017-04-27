@@ -97,7 +97,7 @@ module.exports = {
   deleteSubscription: function (req, res) {
     console.log(chalk.blue('Deleting Podcat Subscription:'));
     console.log(chalk.white('Deleting Podcast ID ' + req.params.id + ' from User ' + req.user.username));
-    sequelize.db.query('DELETE FROM "UserEpisodes" WHERE "UserId" = ' + req.user.id + ' AND "EpisodeId" IN (SELECT "id" FROM "Episodes" WHERE "PodcastId" = ' + req.params.id + ');');
+    //sequelize.db.query('DELETE FROM "UserEpisodes" WHERE "UserId" = ' + req.user.id + ' AND "EpisodeId" IN (SELECT "id" FROM "Episodes" WHERE "PodcastId" = ' + req.params.id + ');');
     sequelize.db.query('DELETE FROM "UserPodcasts" WHERE "UserId" = ' + req.user.id + ' AND "PodcastId" = ' + req.params.id)
       .then(function (data) {
         if (data) {
