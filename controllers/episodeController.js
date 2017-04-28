@@ -75,7 +75,7 @@ module.exports = {
     })
     .then(function (data) {
       if (data) {
-        res.status(201).send('Subscribed ' + user.username + ' to episode ' + req.body.episode.title + ' with ID ' + data.id);
+        res.status(201).send('Subscribed ' + user.username + ' to episode ' + req.body.episode.title + ' with ID ' + episode.id);
       } else {
         res.status(500).send('Error subscribing user to Episode: ' + req.body.episode.title);
       }
