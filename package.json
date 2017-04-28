@@ -4,8 +4,9 @@
   "description": "Server API and Database Models for Siren.",
   "main": "server.js",
   "scripts": {
+    "pretest": "node config/seedUsersAndPlaylists.js",
     "start": "node server.js",
-    "test": "mocha spec/* --reporter spec",
+    "test": "mocha spec/* --reporter list",
     "lint": "eslint ."
   },
   "author": "Sailor + Sirens",
@@ -22,6 +23,7 @@
     "moment": "^2.18.1",
     "morgan": "^1.8.1",
     "node-podcast-parser": "^1.0.2",
+    "node-schedule": "^1.2.1",
     "path": "^0.12.7",
     "pg": "^6.1.5",
     "podcast-parser": "^1.1.2",
