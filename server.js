@@ -9,15 +9,10 @@ const userRouter = require('./routers/users');
 const episodeRouter = require('./routers/episodes');
 const playlistRouter = require('./routers/playlists');
 const app = express();
-//const getNewEpisodes = require('./middleware/getNewEpisodes.js').getNewEpisodes;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-//Get new episodes every 1/2 hour
-//setInterval(getNewEpisodes, 1800000);
-
-// AUTHENTICATION MIDDLEWEAR: comment out if testing without token in auth header
 app.use(middleware.auth);
 
 app.use(morgan('dev'));
@@ -36,7 +31,6 @@ app.use(function (err, req, res, next) {
 
 app.listen(config.port, function () {
   console.log('Listening on port ' + config.port);
-  // require('./middleware/db.js');
 });
 
 module.exports = app;
