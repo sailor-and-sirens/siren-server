@@ -1,12 +1,12 @@
 /* globals describe it */
 
 var app = require('../server');
-const chalk = require('chalk');
-const config = require('../config/config');
+//const chalk = require('chalk');
+//const config = require('../config/config');
 var helpers = require('./helpers');
 var request = require('supertest');
 var expect = require('chai').expect;
-var episodeId = null;
+//var episodeId = null;
 
 // TODO: make tests for the other CRUD routes
 // DELETE, UPDATE, PUT, GET ONE

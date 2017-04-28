@@ -1,19 +1,20 @@
 var schedule = require('node-schedule');
 var getNewEpisodes = require('../middleware/getNewEpisodes');
 
-var APP = {
+var SIREN = {
   scheduleJob: function () {
-    rule = '0 * * * *'
-    var job = schedule.scheduleJob(rule, function() {
+    var rule = '0 * * * *';
+    schedule.scheduleJob(rule, function () {
+      console.log('Fetching new episodes for Podcast subscriptions.....');
       getNewEpisodes();
-    })
+    });
   },
 
-  init: function() {
-    APP.scheduleJob();
+  init: function () {
+    SIREN.scheduleJob();
   }
 };
 
-(function() {
-  APP.init();
+(function () {
+  SIREN.init();
 })();
